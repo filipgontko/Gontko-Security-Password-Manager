@@ -1,3 +1,4 @@
+from my_logger import logger
 
 
 class Credentials:
@@ -23,16 +24,20 @@ class Credentials:
         self.password = password
 
     def get_credentials(self):
+        logger.info("Getting credentials.")
         return list((self.site, self.username, self.password))
 
     def update_site(self, site):
-        pass
+        logger.info("Updating site to {}".format(site))
+        self.site = site
 
     def update_username(self, username):
-        pass
+        logger.info("Updating username to {}".format(username))
+        self.username = username
 
     def update_password(self, password):
-        pass
+        logger.info("Updating password.")
+        self.password = password
 
-    def remove_credentials(self, site, username, password):
-        pass
+    def __del__(self):
+        logger.info("Credentials deleted.")
