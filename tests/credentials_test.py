@@ -1,5 +1,5 @@
 import unittest
-from backend.credetntials import *
+from backend.credentials import *
 
 
 class CredentialsTest(unittest.TestCase):
