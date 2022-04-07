@@ -1,6 +1,7 @@
 import sqlite3
 
 from backend.my_logger import logger
+from backed.crypto import encrypt_message
 
 
 def create_table():
@@ -57,8 +58,9 @@ def insert_credentials(credentials):
     try:
         sqlite_conn = connect_db()
         cursor = sqlite_conn.cursor()
+        encrypted_password = encrypt_message(credentials.password)
         insert_query = """INSERT INTO credentials_table(site, username, password) 
-                       VALUES ('{}', '{}', {});""".format(credentials.site, credentials.username, credentials.password)
+                       VALUES ('{}', '{}', {});""".format(credentials.site, credentials.username, encrypted_password)
         cursor.execute(insert_query)
         sqlite_conn.commit()
         cursor.close()
