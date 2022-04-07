@@ -6,26 +6,26 @@ import string
 from cryptography.fernet import Fernet
 
 
-def encrypt_message(message, master_key):
+def encrypt_message(message):
     """
     Encrypts (AES256) given credentials with the given master key.
-    :param master_key: Key used to encrypt credentials.
     :param message: Message to encrypt.
     :return: Encrypted message.
     """
+    # TODO: master key has to be pulled from the DB.
     f = Fernet(master_key)
     encoded_credentials = message.encode()
     encrypted = f.encrypt(encoded_credentials)
     return encrypted
 
 
-def decrypt_message(message, master_key):
+def decrypt_message(message):
     """
     Decrypts given credentials with the given master key.
-    :param master_key: Key used to decrypt credentials.
     :param message: Message to encrypt.
     :return: Decrypted message.
     """
+    # TODO: master key has to be pulled from the DB.
     f = Fernet(master_key)
     decrypted = f.decrypt(message)
     return decrypted
@@ -47,9 +47,10 @@ def hash_key(master_password):
     return digest
 
 
-def generate_password(length):
+def generate_password(length=12):
     """
     Generate a strong password.
+    :param length: Length of the password (minimum length is 12 characters).
     :return: Password string.
     """
     lower = string.ascii_lowercase
