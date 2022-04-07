@@ -1,7 +1,7 @@
 import sqlite3
 
 from backend.my_logger import logger
-from backed.crypto import encrypt_message
+from backend.crypto import encrypt_message
 
 
 def create_table():
@@ -115,6 +115,26 @@ def get_password(credentials):
         disconnect_db(sqlite_conn)
 
 
+def delete_credentials(credentials):
+    """
+    Delete credentials from the database.
+    :param credentials: Credentials object to be removed.
+    :return: bool: True if successful, False otherwise.
+    """
+    try:
+        sqlite_conn = connect_db()
+        cursor = sqlite_conn.cursor()
+        delete_query = """DELETE FROM credentials_table 
+                        WHERE site = '{}' AND username = '{}'""".format(credentials.site, credentials.username)
+        cursor.execute(delete_query)
+        sqlite_conn.commit()
+        cursor.close()
+    except sqlite3.Error as error:
+        logger.error("Error while deleting - {}".format(error))
+    finally:
+        disconnect_db(sqlite_conn)
+
+
 def clear_db():
     """
     Clear all credential information.
@@ -123,7 +143,7 @@ def clear_db():
     try:
         sqlite_conn = connect_db()
         cursor = sqlite_conn.cursor()
-        delete_query = "DELETE FROM master_key_db"
+        delete_query = "DELETE FROM credentials_table"
         cursor.execute(delete_query)
         sqlite_conn.commit()
         cursor.close()
