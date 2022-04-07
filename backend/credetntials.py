@@ -1,4 +1,4 @@
-from my_logger import logger
+from backend.my_logger import logger
 
 
 class Credentials:
