@@ -99,7 +99,7 @@ def get_password(credentials):
     """
     Get the password for a specific site.
     :param credentials: Credentials object for which to retrieve the password.
-    :return: Encrypted password
+    :return: Encrypted password.
     """
     try:
         sqlite_conn = connect_db()
