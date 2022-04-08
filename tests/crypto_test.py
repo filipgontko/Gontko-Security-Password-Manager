@@ -1,8 +1,8 @@
 import unittest
 
 
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
+class CryptoTestCase(unittest.TestCase):
+    def test_generate_crypto_base(self):
         self.assertEqual(True, False)  # add assertion here
 
 
