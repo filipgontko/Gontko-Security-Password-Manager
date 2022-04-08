@@ -1,4 +1,4 @@
-from my_logger import logger
+from backend.my_logger import logger
 
 
 class Credentials:
@@ -15,7 +15,6 @@ class Credentials:
         update_site: Update site.
         update_username: Update username.
         update_password: Update password.
-        remove_credentials: Remove credentials.
     """
 
     def __init__(self, site=None, username=None, password=None):
