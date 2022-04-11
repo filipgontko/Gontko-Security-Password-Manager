@@ -88,13 +88,13 @@ def decrypt_message(encryption_file):
     return decrypted
 
 
-def hash_key(master_password):
+def hash_key():
     """
-    Creates a hash of the given master password to be stored in the database. PBKDF2-SHA256 is used.
-    :param master_password: Key used to log in to the password manager.
+    Creates a salted hash of the given master password to be stored in the database. PBKDF2-SHA256 is used.
     :return: Hash of the given master key.
     """
     salt = secrets.token_bytes(32)
+    master_password = input("Create a master password: ")
     derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
     digest = derived_key.hex()
 
@@ -104,6 +104,23 @@ def hash_key(master_password):
     except IOError as e:
         return e
 
+    return digest
+
+
+def compare_master_password_hash():
+    """
+    Compares the hash of the given master password to the hash of the saved master password hash.
+    :return: Hash of the salted master password.
+    """
+    try:
+        with open("master_key_salt.bin", "rb") as file:
+            salt = file.read()
+    except IOError as e:
+        return e
+
+    master_password = input("Enter the master password: ")
+    derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
+    digest = derived_key.hex()
     return digest
 
 

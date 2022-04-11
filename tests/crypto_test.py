@@ -25,8 +25,8 @@ class CryptoTestCase(unittest.TestCase):
         self.assertEqual(decrypted, "password11")
 
     def test_hash_key(self):
-        hashed_key = hash_key("password123")
-        self.assertEqual(hashed_key, "asdasd")
+        stored_hashed_key = hash_key("password123")
+        self.assertEqual(stored_hashed_key, compare_master_password_hash())
 
     def test_generate_password(self):
         pass
