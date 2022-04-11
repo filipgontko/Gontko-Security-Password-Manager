@@ -141,4 +141,5 @@ def generate_password(length=12):
     pwd_suggestion = random.sample(all, length)
 
     generated_password = "".join(pwd_suggestion)
+    # TODO: Check if pwd has been pawned.
     return generated_password
