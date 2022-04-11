@@ -16,13 +16,13 @@ class CryptoTestCase(unittest.TestCase):
         self.assertEqual(key_base, "u7C2XipBwEMom|L80Z;t,1#>-")
 
     def test_encrypt_message(self):
-        message = "password123"
+        message = "password11"
         encrypted_message = encrypt_message(message)
-        self.assertIsNotNone(encrypted_message)
+        self.assertEqual(encrypted_message, True)
 
     def test_decrypt_message(self):
         decrypted = decrypt_message("encrypted_message.bin")
-        self.assertEqual(decrypted, "password123")
+        self.assertEqual(decrypted, "password11")
 
     def test_has_key(self):
         pass

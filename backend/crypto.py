@@ -18,8 +18,11 @@ def generate_crypto_key_base():
     """
     if not (key_exists()):
         key = generate_password(25)
-        with open("secret.key", "w") as crypto_key_file:
-            crypto_key_file.write(key)
+        try:
+            with open("secret.key", "w") as crypto_key_file:
+                crypto_key_file.write(key)
+        except IOError as e:
+            return e
 
 
 def key_exists():
@@ -35,8 +38,11 @@ def load_crypto_key_base_from_file():
     Load the secret key from a file.
     :return: Crypto key base.
     """
-    with open("secret.key", "r") as reader:
-        return reader.readline()
+    try:
+        with open("secret.key", "r") as reader:
+            return reader.readline()
+    except IOError as e:
+        return e
 
 
 def encrypt_message(message):
@@ -52,8 +58,13 @@ def encrypt_message(message):
     cipher_config = AES.new(private_key, AES.MODE_GCM)
 
     cipher_text, tag = cipher_config.encrypt_and_digest(bytes(message, 'utf-8'))
-    with open("encrypted_message.bin", "wb") as output:
-        [output.write(x) for x in (cipher_text, salt, cipher_config.nonce, tag)]
+
+    try:
+        with open("encrypted_message.bin", "wb") as output:
+            [output.write(x) for x in (salt, cipher_config.nonce, tag, cipher_text)]
+        return True
+    except IOError as e:
+        return e
 
 
 def decrypt_message(encryption_file):
@@ -62,8 +73,11 @@ def decrypt_message(encryption_file):
     :param encryption_file: File containing encryption parameters and the cipher text.
     :return: Decrypted message.
     """
-    with open(encryption_file, "rb") as reader:
-        cipher_text, salt, nonce, tag = [reader.read(x) for x in (12, 16, 16, -1)]
+    try:
+        with open(encryption_file, "rb") as reader:
+            salt, nonce, tag,  cipher_text = [reader.read(x) for x in (16, 16, 16, -1)]
+    except IOError as e:
+        return e
 
     key_base = load_crypto_key_base_from_file()
     kdf = PBKDF2(key_base, salt, 64, 1000)
