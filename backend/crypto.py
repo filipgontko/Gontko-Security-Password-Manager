@@ -45,15 +45,16 @@ def load_crypto_key_base_from_file():
 
 def encrypt_message(message):
     """
-    Encrypts (AES256) given credentials with the given master key.
+    Encrypts (AES256) given credentials with a master key consisting of a master password and a key file.
     :param message: Message to encrypt.
     :return: Encrypted message.
     """
     salt = secrets.token_bytes(BLOCK_SIZE)
-    key_base = load_crypto_key_base_from_file()
+    master_password = input("Master Password: ")
+    key_base = load_crypto_key_base_from_file() + master_password
     kdf = PBKDF2(key_base, salt, 64, 1000)
-    private_key = kdf[:32]
-    cipher_config = AES.new(private_key, AES.MODE_GCM)
+    master_key = kdf[:32]
+    cipher_config = AES.new(master_key, AES.MODE_GCM)
 
     cipher_text, tag = cipher_config.encrypt_and_digest(bytes(message, 'utf-8'))
 
@@ -77,10 +78,11 @@ def decrypt_message(encryption_file):
     except IOError as e:
         return e
 
-    key_base = load_crypto_key_base_from_file()
+    master_password = input("Master Password: ")
+    key_base = load_crypto_key_base_from_file() + master_password
     kdf = PBKDF2(key_base, salt, 64, 1000)
-    private_key = kdf[:32]
-    cipher_config = AES.new(private_key, AES.MODE_GCM, nonce=nonce)
+    master_key = kdf[:32]
+    cipher_config = AES.new(master_key, AES.MODE_GCM, nonce=nonce)
 
     decrypted = cipher_config.decrypt_and_verify(cipher_text, tag).decode('utf-8')
     return decrypted
@@ -95,6 +97,13 @@ def hash_key(master_password):
     salt = secrets.token_bytes(32)
     derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
     digest = derived_key.hex()
+
+    try:
+        with open("master_key_salt.bin", "wb") as output:
+            output.write(salt)
+    except IOError as e:
+        return e
+
     return digest
 
 
