@@ -59,6 +59,7 @@ def encrypt_message(message):
     cipher_text, tag = cipher_config.encrypt_and_digest(bytes(message, 'utf-8'))
 
     try:
+        # TODO: Change it to save into a DB instead of a file
         with open("encrypted_message.bin", "wb") as output:
             [output.write(x) for x in (salt, cipher_config.nonce, tag, cipher_text)]
         return True
@@ -73,6 +74,7 @@ def decrypt_message(encryption_file):
     :return: Decrypted message.
     """
     try:
+        # TODO: Change it to retrieve from a DB instead of a file
         with open(encryption_file, "rb") as reader:
             salt, nonce, tag,  cipher_text = [reader.read(x) for x in (16, 16, 16, -1)]
     except IOError as e:

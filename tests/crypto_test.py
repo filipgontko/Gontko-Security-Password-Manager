@@ -29,7 +29,8 @@ class CryptoTestCase(unittest.TestCase):
         self.assertEqual(stored_hashed_key, compare_master_password_hash())
 
     def test_generate_password(self):
-        pass
+        generated_password = generate_password()
+        self.assertEqual(len(generated_password), 12)
 
 
 if __name__ == '__main__':
