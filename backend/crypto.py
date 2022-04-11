@@ -90,7 +90,7 @@ def decrypt_message(encryption_file):
     return decrypted
 
 
-def hash_key():
+def create_master_key():
     """
     Creates a salted hash of the given master password to be stored in the database. PBKDF2-SHA256 is used.
     :return: Hash of the given master key.
