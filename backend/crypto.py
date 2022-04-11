@@ -10,8 +10,6 @@ from Crypto import Random
 from Crypto.Protocol.KDF import PBKDF2
 
 BLOCK_SIZE = 16
-pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
-unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 
 
 def generate_crypto_key_base():
@@ -37,19 +35,8 @@ def load_crypto_key_base_from_file():
     Load the secret key from a file.
     :return: Crypto key base.
     """
-    return open("secret.key", "r").read()
-
-
-def get_crypto_key():
-    """
-    Get the crypto key used to encrypt/decrypt the message.
-    :return: The secret key.
-    """
-    password = load_crypto_key_base_from_file()
-    salt = Random.get_random_bytes(BLOCK_SIZE)
-    kdf = PBKDF2(password, salt, 64, 1000)
-    key = kdf[:32]
-    return key
+    with open("secret.key", "r") as reader:
+        return reader.readline()
 
 
 def encrypt_message(message):
@@ -58,24 +45,33 @@ def encrypt_message(message):
     :param message: Message to encrypt.
     :return: Encrypted message.
     """
-    key = get_crypto_key()
-    raw = pad(message)
-    iv = Random.new().read(AES.block_size)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return base64.b64encode(iv + cipher.encrypt(raw))
+    salt = Random.get_random_bytes(BLOCK_SIZE)
+    key_base = load_crypto_key_base_from_file()
+    kdf = PBKDF2(key_base, salt, 64, 1000)
+    private_key = kdf[:32]
+    cipher_config = AES.new(private_key, AES.MODE_GCM)
+
+    cipher_text, tag = cipher_config.encrypt_and_digest(bytes(message, 'utf-8'))
+    with open("encrypted_message.bin", "wb") as output:
+        [output.write(x) for x in (cipher_text, salt, cipher_config.nonce, tag)]
 
 
-def decrypt_message(message):
+def decrypt_message(encryption_file):
     """
     Decrypts given credentials with the given master key.
-    :param message: Message to encrypt.
+    :param encryption_file: File containing encryption parameters and the cipher text.
     :return: Decrypted message.
     """
-    key = get_crypto_key()
-    enc = base64.b64decode(message)
-    iv = enc[:16]
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return unpad(cipher.decrypt(enc[16:]))
+    with open(encryption_file, "rb") as reader:
+        cipher_text, salt, nonce, tag = [reader.read(x) for x in (12, 16, 16, -1)]
+
+    key_base = load_crypto_key_base_from_file()
+    kdf = PBKDF2(key_base, salt, 64, 1000)
+    private_key = kdf[:32]
+    cipher_config = AES.new(private_key, AES.MODE_GCM, nonce=nonce)
+
+    decrypted = cipher_config.decrypt_and_verify(cipher_text, tag).decode('utf-8')
+    return decrypted
 
 
 # TODO: Find out how to hash with salt and always use the same salt for a specific password. Maybe store salt in DB?
