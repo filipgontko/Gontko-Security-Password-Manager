@@ -110,6 +110,26 @@ def get_master_key_hash(email):
         disconnect_db(sqlite_conn)
 
 
+def check_user_record_exists(email):
+    """
+    Check if the specified user exists.
+    :param email: E-mail address of the account which needs to be checked for existence.
+    :return: True if user with the e-mail address exists, False otherwise.
+    """
+    try:
+        sqlite_conn = connect_db()
+        cursor = sqlite_conn.cursor()
+        total_query = """SELECT EXISTS (SELECT 1 FROM master_table
+                          WHERE email = '{}'""".format(email)
+        cursor.execute(total_query)
+        record = cursor.fetchone()[0]
+        return record
+    except sqlite3.Error as error:
+        print("Error while connecting to the DB - {}".format(error))
+    finally:
+        disconnect_db(sqlite_conn)
+
+
 def clear_table():
     """
     Clear all credential information.
