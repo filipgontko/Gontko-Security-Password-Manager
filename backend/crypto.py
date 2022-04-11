@@ -2,11 +2,9 @@ import hashlib
 import secrets
 import random
 import string
-import base64
 import os
 
 from Crypto.Cipher import AES
-from Crypto import Random
 from Crypto.Protocol.KDF import PBKDF2
 
 BLOCK_SIZE = 16
@@ -51,7 +49,7 @@ def encrypt_message(message):
     :param message: Message to encrypt.
     :return: Encrypted message.
     """
-    salt = Random.get_random_bytes(BLOCK_SIZE)
+    salt = secrets.token_bytes(BLOCK_SIZE)
     key_base = load_crypto_key_base_from_file()
     kdf = PBKDF2(key_base, salt, 64, 1000)
     private_key = kdf[:32]
@@ -88,14 +86,10 @@ def decrypt_message(encryption_file):
     return decrypted
 
 
-# TODO: Find out how to hash with salt and always use the same salt for a specific password. Maybe store salt in DB?
-# Follow this standard https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf
-
-
 def hash_key(master_password):
     """
     Creates a hash of the given master password to be stored in the database. PBKDF2-SHA256 is used.
-    :param master_password: Key used to encrypt/decrypt credentials.
+    :param master_password: Key used to log in to the password manager.
     :return: Hash of the given master key.
     """
     salt = secrets.token_bytes(32)

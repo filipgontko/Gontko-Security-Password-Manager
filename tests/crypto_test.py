@@ -24,8 +24,9 @@ class CryptoTestCase(unittest.TestCase):
         decrypted = decrypt_message("encrypted_message.bin")
         self.assertEqual(decrypted, "password11")
 
-    def test_has_key(self):
-        pass
+    def test_hash_key(self):
+        hashed_key = hash_key("password123")
+        self.assertEqual(hashed_key, "asdasd")
 
     def test_generate_password(self):
         pass
