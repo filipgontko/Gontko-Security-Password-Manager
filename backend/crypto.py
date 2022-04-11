@@ -3,6 +3,7 @@ import secrets
 import random
 import string
 import base64
+import os
 
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -28,11 +29,7 @@ def key_exists():
     Validate if a key exists
     :return: True if the key exists, False otherwise
     """
-    try:
-        if open("secret.key", "r").read():
-            return True
-    except:
-        return False
+    return os.path.isfile('secret.key')
 
 
 def load_crypto_key_base_from_file():
