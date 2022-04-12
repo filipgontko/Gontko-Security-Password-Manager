@@ -1,4 +1,6 @@
-from backend.crypto import compare_master_password_hash, create_master_key
+from backend.credentials import Credentials
+from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message
+from backend.databases.credentials_database import insert_credentials, edit_password
 from backend.databases.master_key_database import check_user_record_exists, create_table, insert_master_information
 
 
@@ -71,3 +73,42 @@ class PasswordManager:
         """
         self.user_logged_in = False
         # TODO: Show login screen
+
+    def add_new_credentials(self):
+        try:
+            if self.check_user_logged_in():
+                site = input("Website: ")
+                username = input("Username: ")
+                password = input("Password: ")
+                encrypted_password = encrypt_message(password)
+                credentials = Credentials(site, username, encrypted_password)
+                insert_credentials(credentials)
+                return True
+        except Exception as e:
+            return False
+        return False
+
+    def edit_credentials(self, switcher):
+        try:
+            if self.check_user_logged_in():
+                if switcher == "password":
+                    site = input("Website: ")
+                    username = input("Username: ")
+                    password = input("New password: ")
+                    encrypted_password = encrypt_message(password)
+                    credentials = Credentials(site, username, encrypted_password)
+                    edit_password(credentials)
+                elif switcher == "username":
+                    pass
+                elif switcher == "site":
+                    pass
+                else:
+                    pass
+                return True
+        except Exception as e:
+            return False
+        return False
+
+    def remove_credentials(self):
+        if self.check_user_logged_in():
+            pass
