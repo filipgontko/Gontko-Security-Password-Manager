@@ -35,7 +35,7 @@ class DatabaseTestCase(unittest.TestCase):
     def test_clear_table(self):
         database = Database()
         database.clear_table("test_table")
-        self.assertEqual(database.table, None)
+        self.assertEqual(database.connection, None)
 
 
 if __name__ == '__main__':
