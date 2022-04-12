@@ -31,7 +31,7 @@ class Database(ABC):
         if self.connection:
             self.connection = self.connection.close()
 
-    def clear_table(self, table_name):
+    def clear_table(self):
         """
         Clear all credential information.
         :return: bool: True if successful, False otherwise.
@@ -39,7 +39,7 @@ class Database(ABC):
         try:
             sqlite_conn = self.connect_db()
             cursor = sqlite_conn.cursor()
-            delete_query = "DELETE FROM {}".format(table_name)
+            delete_query = "DELETE FROM {}".format(self.table)
             cursor.execute(delete_query)
             sqlite_conn.commit()
             cursor.close()

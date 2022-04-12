@@ -5,6 +5,9 @@ from backend.my_logger import logger
 
 
 class MasterKeyDB(Database):
+    def __init__(self):
+        super().__init__(table="master_table")
+
     def create_table(self):
         """
         Create table for storing master key hash and e-mail address it's connected with.
@@ -20,17 +23,10 @@ class MasterKeyDB(Database):
             cursor.execute(create_table_query)
             self.connection.commit()
             cursor.close()
-
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
         finally:
             self.disconnect_db()
-
-    def connect_db(self):
-        return super().connect_db()
-
-    def disconnect_db(self):
-        return super().disconnect_db()
 
     def insert_master_information(self, master_key_hash, email):
         """
@@ -110,6 +106,3 @@ class MasterKeyDB(Database):
             print("Error while connecting to the DB - {}".format(error))
         finally:
             self.disconnect_db()
-
-    def clear_table(self, table_name):
-        super().clear_table("master_table")

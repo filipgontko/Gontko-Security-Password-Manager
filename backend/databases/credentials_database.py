@@ -6,6 +6,9 @@ from backend.crypto import encrypt_message
 
 
 class CredentialsDB(Database):
+    def __init__(self):
+        super().__init__(table="credentials_table")
+
     def create_table(self):
         """
         Create table for storing username, password and site.
@@ -22,17 +25,10 @@ class CredentialsDB(Database):
             cursor.execute(create_table_query)
             self.connection.commit()
             cursor.close()
-
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
         finally:
             self.disconnect_db()
-
-    def connect_db(self):
-        return super().connect_db()
-
-    def disconnect_db(self):
-        return super().disconnect_db()
 
     def insert_credentials(self, credentials):
         """
@@ -114,6 +110,3 @@ class CredentialsDB(Database):
             logger.error("Error while deleting - {}".format(error))
         finally:
             self.disconnect_db()
-
-    def clear_table(self, table_name):
-        super().clear_table("credentials_table")
