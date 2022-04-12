@@ -4,11 +4,20 @@ from backend.databases.credentials_database import insert_credentials, edit_pass
 from backend.databases.master_key_database import check_user_record_exists, create_table, insert_master_information
 from backend.my_logger import logger
 
-def prepare_credentials():
+
+def prepare_credentials(password_change=False):
+    """
+    Prepare credentials that will be either created, updated, or deleted.
+    Returns:
+        Credentials object
+    """
     site = input("Website: ")
     username = input("Username: ")
-    password = input("Password: ")
-    encrypted_password = encrypt_message(password)
+    encrypted_password = None
+    if password_change:
+        password = input("New password: ")
+        encrypted_password = encrypt_message(password)
+        password = "*********"  # Overwrite password so it doesn't stay in memory.
     credentials = Credentials(site, username, encrypted_password)
     return credentials
 
@@ -86,7 +95,7 @@ class PasswordManager:
     def add_new_credentials(self):
         try:
             if self.check_user_logged_in():
-                credentials = prepare_credentials()
+                credentials = prepare_credentials(True)
                 insert_credentials(credentials)
                 return True
         except Exception as e:
@@ -98,7 +107,7 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 if switcher == "password":
-                    credentials = prepare_credentials()
+                    credentials = prepare_credentials(True)
                     edit_password(credentials)
                 elif switcher == "username":
                     credentials = prepare_credentials()
