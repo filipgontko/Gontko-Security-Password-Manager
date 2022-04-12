@@ -1,7 +1,7 @@
 from backend.credentials import Credentials
 from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message
-from backend.databases.credentials_database import insert_credentials, edit_password, delete_credentials
-from backend.databases.master_key_database import check_user_record_exists, create_table, insert_master_information
+from backend.databases.master_key_database import MasterKeyDB
+from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
 
 
@@ -35,6 +35,8 @@ class PasswordManager:
         """
         self.user_logged_in = user_logged_in
         self.email = email
+        self.master_db = MasterKeyDB()
+        self.credentials_db = CredentialsDB()
 
     def sign_up(self):
         """
@@ -43,10 +45,10 @@ class PasswordManager:
             True if successful, False otherwise.
         """
         try:
-            create_table()
+            self.master_db.create_table()
             master_key_hash = create_master_key()
             self.email = input("E-mail: ")
-            insert_master_information(master_key_hash, self.email)
+            self.master_db.insert_master_information(master_key_hash, self.email)
             self.user_logged_in = True
             return True
         except Exception as e:
@@ -58,7 +60,7 @@ class PasswordManager:
         Returns:
             True if successful, False otherwise.
         """
-        return check_user_record_exists(self.email)
+        return self.master_db.check_user_record_exists(self.email)
 
     def login(self):
         """
@@ -101,7 +103,7 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 credentials = prepare_credentials(True)
-                insert_credentials(credentials)
+                self.credentials_db.insert_credentials(credentials)
                 return True
         except Exception as e:
             return False
@@ -121,7 +123,7 @@ class PasswordManager:
             if self.check_user_logged_in():
                 if switcher == "password":
                     credentials = prepare_credentials(True)
-                    edit_password(credentials)
+                    self.credentials_db.edit_password(credentials)
                 elif switcher == "username":
                     credentials = prepare_credentials()
                     # TODO: Edit username in db.
@@ -145,7 +147,7 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 credentials = prepare_credentials()
-                delete_credentials(credentials)
+                self.credentials_db.delete_credentials(credentials)
                 return True
         except Exception as e:
             return False
