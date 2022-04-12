@@ -93,6 +93,11 @@ class PasswordManager:
         # TODO: Show login screen
 
     def add_new_credentials(self):
+        """
+        Adds new credentials to the password manager.
+        Returns:
+            True if successful, False otherwise.
+        """
         try:
             if self.check_user_logged_in():
                 credentials = prepare_credentials(True)
@@ -104,6 +109,14 @@ class PasswordManager:
         return False
 
     def edit_credentials(self, switcher):
+        """
+        Edit credentials in password manager.
+        Args:
+            switcher: String specifying what credentials to edit (site, username or password).
+
+        Returns:
+            True if successful, False otherwise.
+        """
         try:
             if self.check_user_logged_in():
                 if switcher == "password":
@@ -124,6 +137,11 @@ class PasswordManager:
         return False
 
     def remove_credentials(self):
+        """
+        Remove credentials from password manager.
+        Returns:
+            True if successful, False otherwise.
+        """
         try:
             if self.check_user_logged_in():
                 credentials = prepare_credentials()
