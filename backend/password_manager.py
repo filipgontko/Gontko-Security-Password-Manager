@@ -1,7 +1,16 @@
 from backend.credentials import Credentials
 from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message
-from backend.databases.credentials_database import insert_credentials, edit_password
+from backend.databases.credentials_database import insert_credentials, edit_password, delete_credentials
 from backend.databases.master_key_database import check_user_record_exists, create_table, insert_master_information
+from backend.my_logger import logger
+
+def prepare_credentials():
+    site = input("Website: ")
+    username = input("Username: ")
+    password = input("Password: ")
+    encrypted_password = encrypt_message(password)
+    credentials = Credentials(site, username, encrypted_password)
+    return credentials
 
 
 class PasswordManager:
@@ -77,38 +86,41 @@ class PasswordManager:
     def add_new_credentials(self):
         try:
             if self.check_user_logged_in():
-                site = input("Website: ")
-                username = input("Username: ")
-                password = input("Password: ")
-                encrypted_password = encrypt_message(password)
-                credentials = Credentials(site, username, encrypted_password)
+                credentials = prepare_credentials()
                 insert_credentials(credentials)
                 return True
         except Exception as e:
             return False
+        logger.error("User not logged in.")
         return False
 
     def edit_credentials(self, switcher):
         try:
             if self.check_user_logged_in():
                 if switcher == "password":
-                    site = input("Website: ")
-                    username = input("Username: ")
-                    password = input("New password: ")
-                    encrypted_password = encrypt_message(password)
-                    credentials = Credentials(site, username, encrypted_password)
+                    credentials = prepare_credentials()
                     edit_password(credentials)
                 elif switcher == "username":
-                    pass
+                    credentials = prepare_credentials()
+                    # TODO: Edit username in db.
                 elif switcher == "site":
-                    pass
+                    credentials = prepare_credentials()
+                    # TODO: Edit site in db.
                 else:
-                    pass
+                    return False
                 return True
         except Exception as e:
             return False
+        logger.error("User not logged in.")
         return False
 
     def remove_credentials(self):
-        if self.check_user_logged_in():
-            pass
+        try:
+            if self.check_user_logged_in():
+                credentials = prepare_credentials()
+                delete_credentials(credentials)
+                return True
+        except Exception as e:
+            return False
+        logger.error("User not logged in.")
+        return False
