@@ -5,8 +5,9 @@ from backend.my_logger import logger
 
 
 class Database(ABC):
-    def __init__(self, connection=None):
+    def __init__(self, connection=None, table=None):
         self.connection = connection
+        self.table = table
 
     def create_table(self):
         pass
@@ -28,7 +29,7 @@ class Database(ABC):
         :return: None
         """
         if self.connection:
-            self.connection.close()
+            self.connection = self.connection.close()
 
     def clear_table(self, table_name):
         """
@@ -45,4 +46,4 @@ class Database(ABC):
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
         finally:
-            self.disconnect_db(sqlite_conn)
+            self.disconnect_db()

@@ -24,7 +24,7 @@ class MasterKeyDB(Database):
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def connect_db(self):
         return super().connect_db()
@@ -50,7 +50,7 @@ class MasterKeyDB(Database):
         except sqlite3.Error as error:
             logger.error("Error while inserting - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def edit_master_information(self, email, master_key_hash_new):
         """
@@ -71,7 +71,7 @@ class MasterKeyDB(Database):
         except sqlite3.Error as error:
             logger.error("Error while updating password - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def get_master_key_hash(self, email):
         """
@@ -90,7 +90,7 @@ class MasterKeyDB(Database):
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def check_user_record_exists(self, email):
         """
@@ -109,7 +109,7 @@ class MasterKeyDB(Database):
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def clear_table(self, table_name):
         super().clear_table("master_table")

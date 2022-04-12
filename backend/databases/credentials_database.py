@@ -26,7 +26,7 @@ class CredentialsDB(Database):
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def connect_db(self):
         return super().connect_db()
@@ -52,7 +52,7 @@ class CredentialsDB(Database):
         except sqlite3.Error as error:
             logger.error("Error while inserting - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     # TODO: Password history should be accessible at least for the last 3 passwords per site.
     # TODO: Edit all credentials should be poosible.
@@ -63,7 +63,7 @@ class CredentialsDB(Database):
         :return: bool: True if successful, False otherwise.
         """
         try:
-            self.onnect_db()
+            self.connect_db()
             cursor = self.connection.cursor()
             update_query = """UPDATE credentials_table 
                             SET password = '{}' 
@@ -75,7 +75,7 @@ class CredentialsDB(Database):
         except sqlite3.Error as error:
             logger.error("Error while updating password - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def get_password(self, credentials):
         """
@@ -94,7 +94,7 @@ class CredentialsDB(Database):
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def delete_credentials(self, credentials):
         """
@@ -113,7 +113,7 @@ class CredentialsDB(Database):
         except sqlite3.Error as error:
             logger.error("Error while deleting - {}".format(error))
         finally:
-            self.disconnect_db(self.connection)
+            self.disconnect_db()
 
     def clear_table(self, table_name):
         super().clear_table("credentials_table")
