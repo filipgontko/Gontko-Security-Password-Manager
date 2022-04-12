@@ -8,7 +8,7 @@ class Database(ABC):
     def __init__(self, connection=None):
         self.connection = connection
 
-    def create_table(self, master_table=False, credentials_table=False):
+    def create_table(self, table_name):
         """
         Create table for storing username, password and site.
         :return: bool: True if successful, False otherwise.
@@ -16,11 +16,6 @@ class Database(ABC):
         try:
             sqlite_conn = self.connect_db()
             cursor = sqlite_conn.cursor()
-            table_name = ""
-            if master_table:
-                table_name = "master_table"
-            if credentials_table:
-                table_name = "credentials_table"
             create_table_query = """CREATE TABLE IF NOT EXISTS {} (
                             site TEXT,
                             username TEXT,
@@ -53,3 +48,20 @@ class Database(ABC):
         """
         if self.connection:
             self.connection.close()
+
+    def clear_db(self, table_name):
+        """
+        Clear all credential information.
+        :return: bool: True if successful, False otherwise.
+        """
+        try:
+            sqlite_conn = self.connect_db()
+            cursor = sqlite_conn.cursor()
+            delete_query = "DELETE FROM {}".format(table_name)
+            cursor.execute(delete_query)
+            sqlite_conn.commit()
+            cursor.close()
+        except sqlite3.Error as error:
+            logger.error("Error while connecting to the DB - {}".format(error))
+        finally:
+            self.disconnect_db(sqlite_conn)
