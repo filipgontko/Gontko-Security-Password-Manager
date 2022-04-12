@@ -1,153 +1,119 @@
 import sqlite3
 
+from backend.databases.database import Database
 from backend.my_logger import logger
 from backend.crypto import encrypt_message
 
 
-def create_table():
-    """
-    Create table for storing username, password and site.
-    :return: bool: True if successful, False otherwise.
-    """
-    try:
-        sqlite_conn = connect_db()
-        cursor = sqlite_conn.cursor()
-        create_table_query = """CREATE TABLE IF NOT EXISTS credentials_table (
-                        site TEXT,
-                        username TEXT,
-                        password TEXT
-                        );"""
-        cursor.execute(create_table_query)
-        sqlite_conn.commit()
-        cursor.close()
+class CredentialsDB(Database):
+    def create_table(self):
+        """
+        Create table for storing username, password and site.
+        :return: bool: True if successful, False otherwise.
+        """
+        try:
+            self.connect_db()
+            cursor = self.connection.cursor()
+            create_table_query = """CREATE TABLE IF NOT EXISTS credentials_table (
+                            site TEXT,
+                            username TEXT,
+                            password TEXT
+                            );"""
+            cursor.execute(create_table_query)
+            self.connection.commit()
+            cursor.close()
 
-    except sqlite3.Error as error:
-        logger.error("Error while connecting to the DB - {}".format(error))
-    finally:
-        disconnect_db(sqlite_conn)
+        except sqlite3.Error as error:
+            logger.error("Error while connecting to the DB - {}".format(error))
+        finally:
+            self.disconnect_db(self.connection)
 
+    def connect_db(self):
+        return super().connect_db()
 
-def connect_db():
-    """
-    Connect to the DB
-    :return: None
-    """
-    try:
-        sqlite_conn = sqlite3.connect('pwdmngrdb.db')
-        return sqlite_conn
-    except sqlite3.Error as error:
-        logger.error("Error while connecting to the DB - {}".format(error))
+    def disconnect_db(self):
+        return super().disconnect_db()
 
+    def insert_credentials(self, credentials):
+        """
+        Insert credentials into the database.
+        :param credentials: Credentials object for which to store username and password
+        :return: bool: True if successful, False otherwise.
+        """
+        try:
+            self.connect_db()
+            cursor = self.connection.cursor()
+            encrypted_password = encrypt_message(credentials.password)
+            insert_query = """INSERT INTO credentials_table(site, username, password) 
+                           VALUES ('{}', '{}', {});""".format(credentials.site, credentials.username, encrypted_password)
+            cursor.execute(insert_query)
+            self.connection.commit()
+            cursor.close()
+        except sqlite3.Error as error:
+            logger.error("Error while inserting - {}".format(error))
+        finally:
+            self.disconnect_db(self.connection)
 
-def disconnect_db(conn):
-    """
-    Disconnect from the DB if connection exists
-    :param conn: DB connection
-    :return: None
-    """
-    if conn:
-        conn.close()
+    # TODO: Password history should be accessible at least for the last 3 passwords per site.
+    # TODO: Edit all credentials should be poosible.
+    def edit_password(self, credentials):
+        """
+        Edit the credential for a specific site. Change either credential is possible.
+        :param credentials: Credentials object for which to store username and password
+        :return: bool: True if successful, False otherwise.
+        """
+        try:
+            self.onnect_db()
+            cursor = self.connection.cursor()
+            update_query = """UPDATE credentials_table 
+                            SET password = '{}' 
+                            WHERE site = '{}' AND username = '{}'""".format(credentials.password, credentials.site,
+                                                                            credentials.username)
+            cursor.execute(update_query)
+            self.connection.commit()
+            cursor.close()
+        except sqlite3.Error as error:
+            logger.error("Error while updating password - {}".format(error))
+        finally:
+            self.disconnect_db(self.connection)
 
+    def get_password(self, credentials):
+        """
+        Get the password for a specific site.
+        :param credentials: Credentials object for which to retrieve the password.
+        :return: Encrypted password.
+        """
+        try:
+            self.connect_db()
+            cursor = self.connection.cursor()
+            total_query = """SELECT password FROM credentials_table
+                          WHERE site = '{}' AND username = '{}'""".format(credentials.site, credentials.username)
+            cursor.execute(total_query)
+            record = cursor.fetchone()[0]
+            return record
+        except sqlite3.Error as error:
+            print("Error while connecting to the DB - {}".format(error))
+        finally:
+            self.disconnect_db(self.connection)
 
-def insert_credentials(credentials):
-    """
-    Insert credentials into the database.
-    :param credentials: Credentials object for which to store username and password
-    :return: bool: True if successful, False otherwise.
-    """
-    try:
-        sqlite_conn = connect_db()
-        cursor = sqlite_conn.cursor()
-        encrypted_password = encrypt_message(credentials.password)
-        insert_query = """INSERT INTO credentials_table(site, username, password) 
-                       VALUES ('{}', '{}', {});""".format(credentials.site, credentials.username, encrypted_password)
-        cursor.execute(insert_query)
-        sqlite_conn.commit()
-        cursor.close()
-    except sqlite3.Error as error:
-        logger.error("Error while inserting - {}".format(error))
-    finally:
-        disconnect_db(sqlite_conn)
+    def delete_credentials(self, credentials):
+        """
+        Delete credentials from the database.
+        :param credentials: Credentials object to be removed.
+        :return: bool: True if successful, False otherwise.
+        """
+        try:
+            self.connect_db()
+            cursor = self.connection.cursor()
+            delete_query = """DELETE FROM credentials_table 
+                            WHERE site = '{}' AND username = '{}'""".format(credentials.site, credentials.username)
+            cursor.execute(delete_query)
+            self.connection.commit()
+            cursor.close()
+        except sqlite3.Error as error:
+            logger.error("Error while deleting - {}".format(error))
+        finally:
+            self.disconnect_db(self.connection)
 
-
-# TODO: Password history should be accessible at least for the last 3 passwords per site.
-# TODO: Edit all credentials should be poosible.
-
-def edit_password(credentials):
-    """
-    Edit the credential for a specific site. Change either credential is possible.
-    :param credentials: Credentials object for which to store username and password
-    :return: bool: True if successful, False otherwise.
-    """
-    try:
-        sqlite_conn = connect_db()
-        cursor = sqlite_conn.cursor()
-        update_query = """UPDATE credentials_table 
-                        SET password = '{}' 
-                        WHERE site = '{}' AND username = '{}'""".format(credentials.password, credentials.site,
-                                                                        credentials.username)
-        cursor.execute(update_query)
-        sqlite_conn.commit()
-        cursor.close()
-    except sqlite3.Error as error:
-        logger.error("Error while updating password - {}".format(error))
-    finally:
-        disconnect_db(sqlite_conn)
-
-
-def get_password(credentials):
-    """
-    Get the password for a specific site.
-    :param credentials: Credentials object for which to retrieve the password.
-    :return: Encrypted password.
-    """
-    try:
-        sqlite_conn = connect_db()
-        cursor = sqlite_conn.cursor()
-        total_query = """SELECT password FROM credentials_table
-                      WHERE site = '{}' AND username = '{}'""".format(credentials.site, credentials.username)
-        cursor.execute(total_query)
-        record = cursor.fetchone()[0]
-        return record
-    except sqlite3.Error as error:
-        print("Error while connecting to the DB - {}".format(error))
-    finally:
-        disconnect_db(sqlite_conn)
-
-
-def delete_credentials(credentials):
-    """
-    Delete credentials from the database.
-    :param credentials: Credentials object to be removed.
-    :return: bool: True if successful, False otherwise.
-    """
-    try:
-        sqlite_conn = connect_db()
-        cursor = sqlite_conn.cursor()
-        delete_query = """DELETE FROM credentials_table 
-                        WHERE site = '{}' AND username = '{}'""".format(credentials.site, credentials.username)
-        cursor.execute(delete_query)
-        sqlite_conn.commit()
-        cursor.close()
-    except sqlite3.Error as error:
-        logger.error("Error while deleting - {}".format(error))
-    finally:
-        disconnect_db(sqlite_conn)
-
-
-def clear_db():
-    """
-    Clear all credential information.
-    :return: bool: True if successful, False otherwise.
-    """
-    try:
-        sqlite_conn = connect_db()
-        cursor = sqlite_conn.cursor()
-        delete_query = "DELETE FROM credentials_table"
-        cursor.execute(delete_query)
-        sqlite_conn.commit()
-        cursor.close()
-    except sqlite3.Error as error:
-        logger.error("Error while connecting to the DB - {}".format(error))
-    finally:
-        disconnect_db(sqlite_conn)
+    def clear_table(self, table_name):
+        super().clear_table("credentials_table")

@@ -5,7 +5,6 @@ from backend.my_logger import logger
 
 
 class MasterKeyDB(Database):
-
     def create_table(self):
         """
         Create table for storing master key hash and e-mail address it's connected with.
