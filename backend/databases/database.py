@@ -1,6 +1,6 @@
 import sqlite3
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from backend.my_logger import logger
 
 
@@ -8,27 +8,8 @@ class Database(ABC):
     def __init__(self, connection=None):
         self.connection = connection
 
-    def create_table(self, table_name):
-        """
-        Create table for storing username, password and site.
-        :return: bool: True if successful, False otherwise.
-        """
-        try:
-            sqlite_conn = self.connect_db()
-            cursor = sqlite_conn.cursor()
-            create_table_query = """CREATE TABLE IF NOT EXISTS {} (
-                            site TEXT,
-                            username TEXT,
-                            password TEXT
-                            );""".format(table_name)
-            cursor.execute(create_table_query)
-            sqlite_conn.commit()
-            cursor.close()
-
-        except sqlite3.Error as error:
-            logger.error("Error while connecting to the DB - {}".format(error))
-        finally:
-            self.disconnect_db(sqlite_conn)
+    def create_table(self):
+        pass
 
     def connect_db(self):
         """
@@ -49,7 +30,7 @@ class Database(ABC):
         if self.connection:
             self.connection.close()
 
-    def clear_db(self, table_name):
+    def clear_table(self, table_name):
         """
         Clear all credential information.
         :return: bool: True if successful, False otherwise.
