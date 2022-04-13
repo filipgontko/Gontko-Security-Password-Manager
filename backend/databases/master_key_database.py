@@ -59,7 +59,7 @@ class MasterKeyDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             update_query = """UPDATE master_table 
-                            SET master_key = '{}' 
+                            SET master_key_hash = '{}' 
                             WHERE email = '{}'""".format(master_key_hash_new, email)
             cursor.execute(update_query)
             self.connection.commit()
@@ -83,7 +83,7 @@ class MasterKeyDB(Database):
             cursor.execute(total_query)
             record = cursor.fetchone()[0]
             return record
-        except sqlite3.Error as error:
+        except sqlite3 as error:
             print("Error while connecting to the DB - {}".format(error))
         finally:
             self.disconnect_db()
@@ -98,7 +98,7 @@ class MasterKeyDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             total_query = """SELECT EXISTS (SELECT 1 FROM master_table
-                              WHERE email = '{}'""".format(email)
+                              WHERE email = '{}')""".format(email)
             cursor.execute(total_query)
             record = cursor.fetchone()[0]
             return record
