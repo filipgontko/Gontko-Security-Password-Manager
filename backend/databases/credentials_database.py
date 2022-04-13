@@ -103,8 +103,8 @@ class CredentialsDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             delete_query = """DELETE FROM credentials_table 
-                            WHERE site = '{}' AND username = '{}'""".format(credentials.site, credentials.username)
-            cursor.execute(delete_query)
+                            WHERE site = ? AND username = ?"""
+            cursor.execute(delete_query, (credentials.site, credentials.username))
             self.connection.commit()
             cursor.close()
         except sqlite3.Error as error:

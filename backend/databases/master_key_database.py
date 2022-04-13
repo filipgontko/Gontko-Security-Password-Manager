@@ -39,8 +39,8 @@ class MasterKeyDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             insert_query = """INSERT INTO master_table(master_key_hash, email) 
-                       VALUES ('{}', '{}');""".format(master_key_hash, email)
-            cursor.execute(insert_query)
+                       VALUES (?, ?);"""
+            cursor.execute(insert_query, (master_key_hash, email))
             self.connection.commit()
             cursor.close()
         except sqlite3.Error as error:
@@ -59,9 +59,9 @@ class MasterKeyDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             update_query = """UPDATE master_table 
-                            SET master_key_hash = '{}' 
-                            WHERE email = '{}'""".format(master_key_hash_new, email)
-            cursor.execute(update_query)
+                            SET master_key_hash = ? 
+                            WHERE email = ?"""
+            cursor.execute(update_query, (master_key_hash_new, email))
             self.connection.commit()
             cursor.close()
         except sqlite3.Error as error:
@@ -78,9 +78,10 @@ class MasterKeyDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            total_query = """SELECT master_key_hash FROM master_table
+            get_mkey_query = """SELECT master_key_hash FROM master_table
                           WHERE email = '{}'""".format(email)
-            cursor.execute(total_query)
+            cursor.execute(get_mkey_query)
+            self.connection.commit()
             record = cursor.fetchone()[0]
             return record
         except sqlite3 as error:
