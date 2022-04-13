@@ -131,7 +131,9 @@ dmypy.json
 .DS_store
 .idea/
 tests.logs/
-*/encrypted_message.bin
-*/secret.key
-*/master_key_salt.bin
+
+# Secrets and DB
+*encrypted_message.bin
+*secret.key
+*master_key_salt.bin
 *.db
