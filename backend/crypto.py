@@ -59,24 +59,22 @@ def encrypt_message(message):
     cipher_text, tag = cipher_config.encrypt_and_digest(bytes(message, 'utf-8'))
 
     try:
-        # TODO: Change it to save into a DB instead of a file
-        with open("encrypted_message.bin", "wb") as output:
-            [output.write(x) for x in (salt, cipher_config.nonce, tag, cipher_text)]
-        return True
-    except IOError as e:
+        output = salt + cipher_config.nonce + tag + cipher_text
+        return output
+    except Exception as e:
         return e
 
 
-def decrypt_message(encryption_file):
+def decrypt_message(encrypted_message):
     """
     Decrypts given credentials with the given master key.
-    :param encryption_file: File containing encryption parameters and the cipher text.
+    :param encrypted_message: File containing encryption parameters and the cipher text.
     :return: Decrypted message.
     """
     try:
-        # TODO: Change it to retrieve from a DB instead of a file
-        with open(encryption_file, "rb") as reader:
-            salt, nonce, tag,  cipher_text = [reader.read(x) for x in (16, 16, 16, -1)]
+        salt, nonce, tag = [encrypted_message[i:i+16] for i in range(0, 47, 16)]
+        chunk_size = len(encrypted_message) - 48
+        cipher_text = [encrypted_message[i:len(encrypted_message)] for i in range(48, len(encrypted_message), chunk_size)]
     except IOError as e:
         return e
 
@@ -86,7 +84,7 @@ def decrypt_message(encryption_file):
     master_key = kdf[:32]
     cipher_config = AES.new(master_key, AES.MODE_GCM, nonce=nonce)
 
-    decrypted = cipher_config.decrypt_and_verify(cipher_text, tag).decode('utf-8')
+    decrypted = cipher_config.decrypt_and_verify(cipher_text[0], tag).decode('utf-8')
     return decrypted
 
 
