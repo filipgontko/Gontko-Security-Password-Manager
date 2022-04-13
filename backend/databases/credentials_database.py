@@ -113,6 +113,11 @@ class CredentialsDB(Database):
             self.disconnect_db()
 
     def view_credentials(self):
+        """
+        View stored sites and usernames in the database
+        Returns:
+            List of credentials tuples (site, username)
+        """
         try:
             self.connect_db()
             cursor = self.connection.cursor()
