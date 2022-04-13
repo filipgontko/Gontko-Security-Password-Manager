@@ -61,11 +61,11 @@ class CredentialsDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
+            encrypted_password = encrypt_message(credentials.password)
             update_query = """UPDATE credentials_table 
-                            SET password = '{}' 
-                            WHERE site = '{}' AND username = '{}'""".format(credentials.password, credentials.site,
-                                                                            credentials.username)
-            cursor.execute(update_query)
+                            SET password = ?
+                            WHERE site = ? AND username = ?"""
+            cursor.execute(update_query, (encrypted_password, credentials.site, credentials.username))
             self.connection.commit()
             cursor.close()
         except sqlite3.Error as error:
@@ -82,9 +82,10 @@ class CredentialsDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            total_query = """SELECT password FROM credentials_table
-                          WHERE site = '{}' AND username = '{}'""".format(credentials.site, credentials.username)
-            cursor.execute(total_query)
+            get_pass_query = """SELECT password FROM credentials_table
+                          WHERE site = ? AND username = ?"""
+            cursor.execute(get_pass_query, (credentials.site, credentials.username))
+            self.connection.commit()
             record = cursor.fetchone()[0]
             return record
         except sqlite3.Error as error:
@@ -106,6 +107,20 @@ class CredentialsDB(Database):
             cursor.execute(delete_query)
             self.connection.commit()
             cursor.close()
+        except sqlite3.Error as error:
+            logger.error("Error while deleting - {}".format(error))
+        finally:
+            self.disconnect_db()
+
+    def view_credentials(self):
+        try:
+            self.connect_db()
+            cursor = self.connection.cursor()
+            view_query = "SELECT site, username FROM credentials_table"
+            cursor.execute(view_query)
+            self.connection.commit()
+            record = cursor.fetchall()
+            return record
         except sqlite3.Error as error:
             logger.error("Error while deleting - {}".format(error))
         finally:
