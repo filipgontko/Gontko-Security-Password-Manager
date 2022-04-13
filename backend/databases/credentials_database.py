@@ -41,8 +41,8 @@ class CredentialsDB(Database):
             cursor = self.connection.cursor()
             encrypted_password = encrypt_message(credentials.password)
             insert_query = """INSERT INTO credentials_table(site, username, password) 
-                           VALUES ('{}', '{}', {});""".format(credentials.site, credentials.username, encrypted_password)
-            cursor.execute(insert_query)
+                           VALUES (?, ?, ?);"""
+            cursor.execute(insert_query, (credentials.site, credentials.username, encrypted_password))
             self.connection.commit()
             cursor.close()
         except sqlite3.Error as error:

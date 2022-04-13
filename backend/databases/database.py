@@ -47,3 +47,20 @@ class Database(ABC):
             logger.error("Error while connecting to the DB - {}".format(error))
         finally:
             self.disconnect_db()
+
+    def drop_table(self):
+        """
+        Drop the whole credential table.
+        :return: bool: True if successful, False otherwise.
+        """
+        try:
+            sqlite_conn = self.connect_db()
+            cursor = sqlite_conn.cursor()
+            drop_query = "DROP TABLE {}".format(self.table)
+            cursor.execute(drop_query)
+            sqlite_conn.commit()
+            cursor.close()
+        except sqlite3.Error as error:
+            logger.error("Error while connecting to the DB - {}".format(error))
+        finally:
+            self.disconnect_db()

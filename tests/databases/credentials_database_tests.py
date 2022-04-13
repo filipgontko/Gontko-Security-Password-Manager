@@ -1,7 +1,7 @@
 import unittest
 
 from backend.credentials import Credentials
-from backend.crypto import encrypt_message
+from backend.crypto import encrypt_message, decrypt_message
 from backend.databases.credentials_database import CredentialsDB
 
 
@@ -16,7 +16,8 @@ class CredentialsDBTestCase(unittest.TestCase):
         credentials = Credentials("google.com", "goofy", "password")
         credentials_database.insert_credentials(credentials)
         get_password = credentials_database.get_password(credentials)
-        self.assertEqual("encrypted", get_password)
+        decrypted = decrypt_message(get_password)
+        self.assertEqual("password", decrypted)
 
     def test_edit_password(self):
         credentials_database = CredentialsDB()
@@ -28,9 +29,14 @@ class CredentialsDBTestCase(unittest.TestCase):
         credentials_database = CredentialsDB()
 
     def test_clear_table(self):
-        master_key_database = CredentialsDB()
-        master_key_database.clear_table()
-        self.assertEqual(master_key_database.connection, None)
+        credentials_database = CredentialsDB()
+        credentials_database.clear_table()
+        self.assertEqual(credentials_database.connection, None)
+
+    def test_drop_table(self):
+        credentials_database = CredentialsDB()
+        credentials_database.drop_table()
+        self.assertEqual(credentials_database.connection, None)
 
 
 if __name__ == '__main__':
