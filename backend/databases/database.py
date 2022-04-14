@@ -22,6 +22,7 @@ class Database(ABC):
             return self.connection
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
+            return None
 
     def disconnect_db(self):
         """
@@ -43,8 +44,10 @@ class Database(ABC):
             cursor.execute(delete_query)
             sqlite_conn.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -60,7 +63,9 @@ class Database(ABC):
             cursor.execute(drop_query)
             sqlite_conn.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
