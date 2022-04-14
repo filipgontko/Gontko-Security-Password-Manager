@@ -43,7 +43,6 @@ class PasswordManager:
             True if successful, False otherwise.
         """
         try:
-            self.master_db.create_table()
             self.email = input("E-mail: ")
             master_key_hash = create_master_key()
             self.master_db.insert_master_information(master_key_hash, self.email)
