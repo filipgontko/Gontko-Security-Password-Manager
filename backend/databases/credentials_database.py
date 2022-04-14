@@ -26,8 +26,10 @@ class CredentialsDB(Database):
             cursor.execute(create_table_query)
             self.connection.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -46,8 +48,10 @@ class CredentialsDB(Database):
             cursor.execute(insert_query, (credentials.site, credentials.username, encrypted_password))
             self.connection.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while inserting - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -69,8 +73,10 @@ class CredentialsDB(Database):
             cursor.execute(update_query, (encrypted_password, credentials.site, credentials.username))
             self.connection.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while updating password - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -91,6 +97,7 @@ class CredentialsDB(Database):
             return record
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
+            return None
         finally:
             self.disconnect_db()
 
@@ -108,8 +115,10 @@ class CredentialsDB(Database):
             cursor.execute(delete_query, (credentials.site, credentials.username))
             self.connection.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while deleting - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -130,6 +139,7 @@ class CredentialsDB(Database):
             return record
         except sqlite3.Error as error:
             logger.error("Error while getting credentials - {}".format(error))
+            return None
         finally:
             self.disconnect_db()
 
@@ -149,5 +159,6 @@ class CredentialsDB(Database):
             return record
         except sqlite3.Error as error:
             logger.error("Error while getting all credentials - {}".format(error))
+            return None
         finally:
             self.disconnect_db()
