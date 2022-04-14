@@ -1,5 +1,5 @@
 from backend.credentials import Credentials
-from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message
+from backend.crypto import compare_master_password_hash, create_master_key
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
