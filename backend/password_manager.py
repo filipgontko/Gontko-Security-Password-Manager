@@ -13,6 +13,7 @@ def prepare_credentials(password_change=False):
     """
     site = input("Website: ")
     username = input("Username: ")
+    password = None
     if password_change:
         password = input("New password: ")
     credentials = Credentials(site, username, password)
@@ -148,6 +149,22 @@ class PasswordManager:
                 credentials = prepare_credentials()
                 self.credentials_db.delete_credentials(credentials)
                 return True
+        except Exception as e:
+            return False
+        logger.error("User not logged in.")
+        return False
+
+    def get_credentials(self):
+        """
+        Get credentials to be viewed.
+        Returns:
+            List of credentials if successful, False otherwise.
+        """
+        try:
+            if self.check_user_logged_in():
+                credentials = prepare_credentials()
+                creds_list = self.credentials_db.view_credentials(credentials)
+                return creds_list
         except Exception as e:
             return False
         logger.error("User not logged in.")

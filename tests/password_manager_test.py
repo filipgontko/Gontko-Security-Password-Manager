@@ -39,13 +39,22 @@ class PasswordManagerTestCase(unittest.TestCase):
         self.assertEqual(result, True)
 
     def test_edit_credentials(self):
-        pass
+        password_manager = PasswordManager()
+        password_manager.login()
+        result = password_manager.edit_credentials(switcher="password")
+        self.assertEqual(result, True)
 
     def test_remove_credentials(self):
-        pass
+        password_manager = PasswordManager()
+        password_manager.login()
+        result = password_manager.remove_credentials()
+        self.assertEqual(result, True)
 
-    def test_prepare_credentials(self):
-        pass
+    def test_get_credentials(self):
+        password_manager = PasswordManager()
+        password_manager.login()
+        result = password_manager.get_credentials()
+        self.assertEqual(result, [])
 
 
 if __name__ == '__main__':

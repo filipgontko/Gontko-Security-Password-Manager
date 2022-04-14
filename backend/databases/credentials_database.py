@@ -113,7 +113,27 @@ class CredentialsDB(Database):
         finally:
             self.disconnect_db()
 
-    def view_credentials(self):
+    def view_credentials(self, credentials):
+        """
+        View stored sites and usernames in the database
+        Returns:
+            List of credentials tuples (site, username)
+        """
+        try:
+            self.connect_db()
+            cursor = self.connection.cursor()
+            view_query = """SELECT site, username FROM credentials_table 
+                            WHERE site = ? AND username = ?"""
+            cursor.execute(view_query, (credentials.site, credentials.username))
+            self.connection.commit()
+            record = cursor.fetchall()
+            return record
+        except sqlite3.Error as error:
+            logger.error("Error while getting credentials - {}".format(error))
+        finally:
+            self.disconnect_db()
+
+    def view_all_credentials(self):
         """
         View stored sites and usernames in the database
         Returns:
@@ -128,6 +148,6 @@ class CredentialsDB(Database):
             record = cursor.fetchall()
             return record
         except sqlite3.Error as error:
-            logger.error("Error while deleting - {}".format(error))
+            logger.error("Error while getting all credentials - {}".format(error))
         finally:
             self.disconnect_db()
