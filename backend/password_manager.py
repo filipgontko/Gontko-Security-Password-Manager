@@ -166,6 +166,6 @@ class PasswordManager:
                 creds_list = self.credentials_db.view_credentials(credentials)
                 return creds_list
         except Exception as e:
-            return False
+            return None
         logger.error("User not logged in.")
-        return False
+        return None
