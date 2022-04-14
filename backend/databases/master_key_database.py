@@ -126,9 +126,9 @@ class MasterKeyDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            total_query = """SELECT COUNT(*) FROM master_table"""
-            cursor.execute(total_query)
-            record = cursor.fetchall
+            empty_query = """SELECT COUNT(*) FROM master_table"""
+            cursor.execute(empty_query)
+            record = cursor.fetchall()
             return record[0][0] == 0
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))

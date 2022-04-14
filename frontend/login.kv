@@ -19,7 +19,7 @@ Screen:
             padding_y: 10
 
         MDTextFieldRound:
-            id: username
+            id: email
             hint_text: "e-mail"
             icon_right: "account"
             size_hint_x: None
@@ -45,7 +45,7 @@ Screen:
             text: "LOG IN"
             font_size: 12
             pos_hint: {"center_x": 0.5}
-            on_press: app.login(username.text, password.text)
+            on_press: app.login(email.text, password.text)
 
         MDRoundFlatButton:
             text: "FORGOT PASSWORD"
