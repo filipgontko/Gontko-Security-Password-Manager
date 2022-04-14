@@ -37,15 +37,15 @@ class PasswordManager:
         self.master_db = MasterKeyDB()
         self.credentials_db = CredentialsDB()
 
-    def sign_up(self):
+    def sign_up(self, email, password):
         """
         Sign up to the password manager.
         Returns:
             True if successful, False otherwise.
         """
         try:
-            self.email = input("E-mail: ")
-            master_key_hash = create_master_key()
+            self.email = email
+            master_key_hash = create_master_key(password)
             self.master_db.insert_master_information(master_key_hash, self.email)
             self.user_logged_in = True
             return True

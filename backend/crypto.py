@@ -88,13 +88,12 @@ def decrypt_message(encrypted_message):
     return decrypted
 
 
-def create_master_key():
+def create_master_key(master_password):
     """
     Creates a salted hash of the given master password to be stored in the database. PBKDF2-SHA256 is used.
     :return: Hash of the given master key.
     """
     salt = secrets.token_bytes(32)
-    master_password = input("Create a master password: ")
     derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
     digest = derived_key.hex()
 
