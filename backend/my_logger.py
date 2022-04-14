@@ -13,9 +13,15 @@ if not os.path.exists("logs"):
     except OSError as e:
         raise e
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 # Set-up basic configuration. This needs to be set-up only once.
-logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s",
-                    datefmt="%d-%b-%y %H:%M:%S", level=0, handlers=[logging.FileHandler(LOG_FILE),
-                                                                    logging.StreamHandler()])
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
 # Creating logger which will be used in other files.
-logger = logging.getLogger("gontko-security-password-manager")
+file_handler = logging.FileHandler(LOG_FILE)
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)

@@ -27,7 +27,7 @@ class DatabaseTestCase(unittest.TestCase):
             cursor.close()
             database.table = "test_table"
         except sqlite3.Error as error:
-            logger.error("Error while connecting to the DB - {}".format(error))
+            mlogger.error("Error while connecting to the DB - {}".format(error))
         finally:
             database.disconnect_db()
         self.assertEqual(database.table, "test_table")
