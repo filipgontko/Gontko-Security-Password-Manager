@@ -7,6 +7,7 @@ from backend.my_logger import logger
 class MasterKeyDB(Database):
     def __init__(self):
         super().__init__(table="master_table")
+        self.create_table()
 
     def create_table(self):
         """

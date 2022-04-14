@@ -9,22 +9,34 @@ class PasswordManagerTestCase(unittest.TestCase):
         self.assertIsInstance(password_manager, PasswordManager)
 
     def test_sign_up(self):
-        pass
+        password_manager = PasswordManager()
+        password_manager.sign_up()
+        self.assertEqual(password_manager.user_logged_in, True)
 
     def test_check_user_exists(self):
-        pass
+        password_manager = PasswordManager()
+        exists = password_manager.check_user_exists()
+        self.assertEqual(exists, False)
+        password_manager.sign_up()
+        exists = password_manager.check_user_exists()
+        self.assertEqual(exists, True)
 
     def test_login(self):
-        pass
+        password_manager = PasswordManager()
+        password_manager.login()
+        self.assertEqual(password_manager.user_logged_in, True)
 
     def test_logout(self):
-        pass
-
-    def test_user_logged_in(self):
-        pass
+        password_manager = PasswordManager()
+        password_manager.user_logged_in = True
+        password_manager.logout()
+        self.assertEqual(password_manager.user_logged_in, False)
 
     def test_add_new_credentials(self):
-        pass
+        password_manager = PasswordManager()
+        password_manager.login()
+        result = password_manager.add_new_credentials()
+        self.assertEqual(result, True)
 
     def test_edit_credentials(self):
         pass

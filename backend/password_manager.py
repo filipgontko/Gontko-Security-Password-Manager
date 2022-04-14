@@ -13,12 +13,10 @@ def prepare_credentials(password_change=False):
     """
     site = input("Website: ")
     username = input("Username: ")
-    encrypted_password = None
     if password_change:
         password = input("New password: ")
-        encrypted_password = encrypt_message(password)
-        password = "*********"  # Overwrite password so it doesn't stay in memory.
-    credentials = Credentials(site, username, encrypted_password)
+    credentials = Credentials(site, username, password)
+    password = "*********"  # Overwrite password so it doesn't stay in memory.
     return credentials
 
 
@@ -46,8 +44,8 @@ class PasswordManager:
         """
         try:
             self.master_db.create_table()
-            master_key_hash = create_master_key()
             self.email = input("E-mail: ")
+            master_key_hash = create_master_key()
             self.master_db.insert_master_information(master_key_hash, self.email)
             self.user_logged_in = True
             return True
@@ -71,9 +69,11 @@ class PasswordManager:
         try:
             self.email = input("E-mail: ")
             if self.check_user_exists():
-                compare_master_password_hash()
-            self.user_logged_in = True
-            return True
+                stored_master_key_hash = self.master_db.get_master_key_hash(self.email)
+                master_key_hash = compare_master_password_hash()
+                if stored_master_key_hash == master_key_hash:
+                    self.user_logged_in = True
+            return self.user_logged_in
         except Exception as e:
             return False
 

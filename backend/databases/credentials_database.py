@@ -8,6 +8,7 @@ from backend.crypto import encrypt_message
 class CredentialsDB(Database):
     def __init__(self):
         super().__init__(table="credentials_table")
+        self.create_table()
 
     def create_table(self):
         """
