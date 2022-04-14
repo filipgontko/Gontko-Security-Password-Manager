@@ -107,7 +107,7 @@ def create_master_key():
     return digest
 
 
-def compare_master_password_hash():
+def compare_master_password_hash(master_password):
     """
     Compares the hash of the given master password to the hash of the saved master password hash.
     :return: Hash of the salted master password.
@@ -118,7 +118,6 @@ def compare_master_password_hash():
     except IOError as e:
         return None
 
-    master_password = input("Enter the master password: ")
     derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
     digest = derived_key.hex()
     return digest

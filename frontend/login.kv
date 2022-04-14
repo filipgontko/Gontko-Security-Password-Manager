@@ -45,11 +45,13 @@ Screen:
             text: "LOG IN"
             font_size: 12
             pos_hint: {"center_x": 0.5}
+            on_press: app.login(username.text, password.text)
 
         MDRoundFlatButton:
             text: "FORGOT PASSWORD"
             font_size: 12
             pos_hint: {"center_x": 0.5}
+            on_press: app.forgot_password()
 
         Widget:
             size_hint_y: None

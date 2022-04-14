@@ -60,20 +60,24 @@ class PasswordManager:
         """
         return self.master_db.check_user_record_exists(self.email)
 
-    def login(self):
+    def login(self, email, password):
         """
         Login to the password manager.
         Returns:
             True if successful, False otherwise.
         """
         try:
-            self.email = input("E-mail: ")
+            self.email = email
+            logger.info("Initiating login...")
             if self.check_user_exists():
                 stored_master_key_hash = self.master_db.get_master_key_hash(self.email)
-                master_key_hash = compare_master_password_hash()
+                master_key_hash = compare_master_password_hash(password)
                 if stored_master_key_hash == master_key_hash:
                     self.user_logged_in = True
-            return self.user_logged_in
+                    logger.info("User with e-mail '{}' successfully logged in.".format(email))
+                    return True
+            logger.info("User with e-mail '{}' does not exist.".format(email))
+            return False
         except Exception as e:
             return False
 
