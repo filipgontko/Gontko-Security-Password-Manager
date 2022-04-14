@@ -24,8 +24,10 @@ class MasterKeyDB(Database):
             cursor.execute(create_table_query)
             self.connection.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -44,8 +46,10 @@ class MasterKeyDB(Database):
             cursor.execute(insert_query, (master_key_hash, email))
             self.connection.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while inserting - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -65,8 +69,10 @@ class MasterKeyDB(Database):
             cursor.execute(update_query, (master_key_hash_new, email))
             self.connection.commit()
             cursor.close()
+            return True
         except sqlite3.Error as error:
             logger.error("Error while updating password - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
 
@@ -87,6 +93,7 @@ class MasterKeyDB(Database):
             return record
         except sqlite3 as error:
             print("Error while connecting to the DB - {}".format(error))
+            return None
         finally:
             self.disconnect_db()
 
@@ -106,5 +113,25 @@ class MasterKeyDB(Database):
             return record
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
+            return False
+        finally:
+            self.disconnect_db()
+
+    def is_empty(self):
+        """
+        CHeck if the database is empty.
+        Returns:
+            True if successful, False otherwise.
+        """
+        try:
+            self.connect_db()
+            cursor = self.connection.cursor()
+            total_query = """SELECT COUNT(*) FROM master_table"""
+            cursor.execute(total_query)
+            record = cursor.fetchall
+            return record[0][0] == 0
+        except sqlite3.Error as error:
+            print("Error while connecting to the DB - {}".format(error))
+            return False
         finally:
             self.disconnect_db()
