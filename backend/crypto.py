@@ -20,7 +20,7 @@ def generate_crypto_key_base():
             with open("secret.key", "w") as crypto_key_file:
                 crypto_key_file.write(key)
         except IOError as e:
-            return e
+            return None
 
 
 def key_exists():
@@ -40,7 +40,7 @@ def load_crypto_key_base_from_file():
         with open("secret.key", "r") as reader:
             return reader.readline()
     except IOError as e:
-        return e
+        return None
 
 
 def encrypt_message(message):
@@ -62,7 +62,7 @@ def encrypt_message(message):
         output = salt + cipher_config.nonce + tag + cipher_text
         return output
     except Exception as e:
-        return e
+        return None
 
 
 def decrypt_message(encrypted_message):
@@ -76,7 +76,7 @@ def decrypt_message(encrypted_message):
         chunk_size = len(encrypted_message) - 48
         cipher_text = [encrypted_message[i:len(encrypted_message)] for i in range(48, len(encrypted_message), chunk_size)]
     except IOError as e:
-        return e
+        return None
 
     master_password = input("Master Password: ")
     key_base = load_crypto_key_base_from_file() + master_password
@@ -102,7 +102,7 @@ def create_master_key():
         with open("master_key_salt.bin", "wb") as output:
             output.write(salt)
     except IOError as e:
-        return e
+        return None
 
     return digest
 
@@ -116,7 +116,7 @@ def compare_master_password_hash():
         with open("master_key_salt.bin", "rb") as file:
             salt = file.read()
     except IOError as e:
-        return e
+        return None
 
     master_password = input("Enter the master password: ")
     derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
