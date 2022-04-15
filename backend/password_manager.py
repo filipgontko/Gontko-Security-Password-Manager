@@ -76,7 +76,7 @@ class PasswordManager:
                     self.user_logged_in = True
                     logger.info("User with e-mail '{}' successfully logged in.".format(email))
                     return True
-            logger.info("User with e-mail '{}' does not exist.".format(email))
+            logger.info("E-mail or password is incorrect.")
             return False
         except Exception as e:
             return False
