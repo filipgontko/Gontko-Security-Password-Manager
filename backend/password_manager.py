@@ -88,6 +88,7 @@ class PasswordManager:
         Returns:
             True if successful, False otherwise.
         """
+        logger.info("Checking if user is logged in.")
         return self.user_logged_in
 
     def logout(self):
@@ -96,6 +97,7 @@ class PasswordManager:
         Returns:
             None
         """
+        logger.info("Logging out...")
         self.user_logged_in = False
         # TODO: Show login screen
 
@@ -107,10 +109,13 @@ class PasswordManager:
         """
         try:
             if self.check_user_logged_in():
+                logger.info("Adding new credentials into password_manager.")
                 credentials = prepare_credentials(True)
                 self.credentials_db.insert_credentials(credentials)
+                logger.info("Credentials added successfully.")
                 return True
         except Exception as e:
+            logger.info("Credentials NOT added.")
             return False
         logger.error("User not logged in.")
         return False
@@ -126,19 +131,25 @@ class PasswordManager:
         """
         try:
             if self.check_user_logged_in():
+                logger.info("Editing credentials within password_manager.")
                 if switcher == "password":
+                    logger.info("Editing password...")
                     credentials = prepare_credentials(True)
                     self.credentials_db.edit_password(credentials)
                 elif switcher == "username":
+                    logger.info("Editing username...")
                     credentials = prepare_credentials()
                     # TODO: Edit username in db.
                 elif switcher == "site":
+                    logger.info("Editing website...")
                     credentials = prepare_credentials()
                     # TODO: Edit site in db.
                 else:
                     return False
+                logger.info("Credentials edited successfully.")
                 return True
         except Exception as e:
+            logger.info("Credentials NOT edited.")
             return False
         logger.error("User not logged in.")
         return False
@@ -151,10 +162,13 @@ class PasswordManager:
         """
         try:
             if self.check_user_logged_in():
+                logger.info("Removing credentials from password_manager.")
                 credentials = prepare_credentials()
                 self.credentials_db.delete_credentials(credentials)
+                logger.info("Credentials deleted successfully.")
                 return True
         except Exception as e:
+            logger.info("Credentials NOT deleted.")
             return False
         logger.error("User not logged in.")
         return False
@@ -167,6 +181,7 @@ class PasswordManager:
         """
         try:
             if self.check_user_logged_in():
+                logger.info("Getting list of credentials.")
                 credentials = prepare_credentials()
                 creds_list = self.credentials_db.view_credentials(credentials)
                 return creds_list
