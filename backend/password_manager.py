@@ -48,6 +48,7 @@ class PasswordManager:
             master_key_hash = create_master_key(password)
             self.master_db.insert_master_information(master_key_hash, self.email)
             self.user_logged_in = True
+            logger.info("Successfully created user account with e-mail: %s.", self.email)
             return True
         except Exception as e:
             return False

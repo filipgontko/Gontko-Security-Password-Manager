@@ -24,6 +24,7 @@ class MasterKeyDB(Database):
             cursor.execute(create_table_query)
             self.connection.commit()
             cursor.close()
+            logger.info("Master table created successfully.")
             return True
         except sqlite3.Error as error:
             logger.error("Error while connecting to the DB - {}".format(error))
@@ -46,6 +47,7 @@ class MasterKeyDB(Database):
             cursor.execute(insert_query, (master_key_hash, email))
             self.connection.commit()
             cursor.close()
+            logger.info("Successfully inserted information into master table.")
             return True
         except sqlite3.Error as error:
             logger.error("Error while inserting - {}".format(error))
@@ -69,6 +71,7 @@ class MasterKeyDB(Database):
             cursor.execute(update_query, (master_key_hash_new, email))
             self.connection.commit()
             cursor.close()
+            logger.info("Successfully updated master key information within master table.")
             return True
         except sqlite3.Error as error:
             logger.error("Error while updating password - {}".format(error))
@@ -90,6 +93,7 @@ class MasterKeyDB(Database):
             cursor.execute(get_mkey_query)
             self.connection.commit()
             record = cursor.fetchone()[0]
+            logger.info("Fetching master key hash...")
             return record
         except sqlite3 as error:
             print("Error while connecting to the DB - {}".format(error))
@@ -110,6 +114,7 @@ class MasterKeyDB(Database):
                               WHERE email = '{}')""".format(email)
             cursor.execute(total_query)
             record = cursor.fetchone()[0]
+            logger.info("Checking if user with the e-mail: {} exists.".format(email))
             return record
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
@@ -129,6 +134,7 @@ class MasterKeyDB(Database):
             empty_query = """SELECT COUNT(*) FROM master_table"""
             cursor.execute(empty_query)
             record = cursor.fetchall()
+            logger.info("Checking if master table is empty.")
             return record[0][0] == 0
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
