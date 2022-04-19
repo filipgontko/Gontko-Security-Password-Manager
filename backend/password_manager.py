@@ -1,3 +1,4 @@
+import re
 from backend.credentials import Credentials
 from backend.crypto import compare_master_password_hash, create_master_key
 from backend.databases.master_key_database import MasterKeyDB
@@ -19,6 +20,21 @@ def prepare_credentials(password_change=False):
     credentials = Credentials(site, username, password)
     password = "*********"  # Overwrite password so it doesn't stay in memory.
     return credentials
+
+
+def check_email(email):
+    """
+    Checks if e-mail is in valid format.
+    Returns:
+        True if successful, False otherwise.
+    """
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    if re.fullmatch(regex, email):
+        logger.info("Valid e-mail address format.")
+        return True
+    else:
+        logger.info("Invalid e-mail address format.")
+        return False
 
 
 class PasswordManager:
@@ -43,6 +59,8 @@ class PasswordManager:
         Returns:
             True if successful, False otherwise.
         """
+        if not check_email(email):
+            return False
         try:
             self.email = email
             master_key_hash = create_master_key(password)
@@ -67,6 +85,8 @@ class PasswordManager:
         Returns:
             True if successful, False otherwise.
         """
+        if not check_email(email):
+            return False
         try:
             self.email = email
             logger.info("Initiating login...")
