@@ -30,6 +30,12 @@ class LoggedIn(Screen):
         super(LoggedIn, self).__init__()
         self.password_manager = password_manager
 
+    data = {
+        'Add NEW Credentials': 'plus-circle-outline',
+        'Edit Credentials': 'pencil-outline',
+        'Generate Password': 'key-outline',
+    }
+
 
 # This needs to be global in order for the screen manager to lead the screens.
 Builder.load_file("frontend/password_manager.kv")
@@ -42,7 +48,8 @@ class PasswordManagerApp(MDApp):
 
     def build(self):
         self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "BlueGray"
+        self.theme_cls.primary_palette = "Amber"
+        self.theme_cls.accent_palette = "Orange"
         sm = ScreenManager()
         if self.password_manager.master_db.is_empty():
             sm.add_widget(Signup(self.password_manager))
