@@ -2,8 +2,6 @@ from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
 
-from backend.password_manager import PasswordManager
-
 
 class Login(Screen):
     def __init__(self, password_manager):
@@ -13,6 +11,9 @@ class Login(Screen):
     def login(self, email, password):
         if self.password_manager.login(email, password):
             self.parent.current = "third"
+
+    def forgot_password(self):
+        pass
 
 
 class Signup(Screen):
@@ -32,7 +33,7 @@ class WindowManager(ScreenManager):
     pass
 
 
-Builder.load_file("password_manager.kv")
+Builder.load_file("frontend/password_manager.kv")
 
 
 class PasswordManagerApp(MDApp):
@@ -49,15 +50,3 @@ class PasswordManagerApp(MDApp):
         sm.add_widget(Login(self.password_manager))
         sm.add_widget(Third(name="third"))
         return sm
-
-    def forgot_password(self):
-        pass
-
-
-def run():
-    password_manager = PasswordManager()
-    PasswordManagerApp(password_manager).run()
-
-
-if __name__ == "__main__":
-    run()
