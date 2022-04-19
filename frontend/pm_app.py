@@ -30,10 +30,13 @@ class LoggedIn(Screen):
         super(LoggedIn, self).__init__()
         self.password_manager = password_manager
 
+    def logout(self):
+        self.password_manager.logout()
+
     data = {
-        'Add NEW Credentials': 'plus-circle-outline',
-        'Edit Credentials': 'pencil-outline',
-        'Generate Password': 'key-outline',
+        'Add credentials': 'plus-circle-outline',
+        'Edit credentials': 'pencil-outline',
+        'Generate password': 'key-outline',
     }
 
 
@@ -48,7 +51,7 @@ class PasswordManagerApp(MDApp):
 
     def build(self):
         self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "Amber"
+        self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.accent_palette = "Orange"
         sm = ScreenManager()
         if self.password_manager.master_db.is_empty():
