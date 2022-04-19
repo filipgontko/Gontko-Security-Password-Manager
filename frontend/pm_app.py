@@ -10,7 +10,7 @@ class Login(Screen):
 
     def login(self, email, password):
         if self.password_manager.login(email, password):
-            self.parent.current = "third"
+            self.parent.current = "logged_in"
 
     def forgot_password(self):
         pass
@@ -25,7 +25,7 @@ class Signup(Screen):
         self.password_manager.sign_up(email, password)
 
 
-class Third(Screen):
+class LoggedIn(Screen):
     pass
 
 
