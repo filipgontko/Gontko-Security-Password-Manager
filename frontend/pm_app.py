@@ -29,10 +29,6 @@ class Third(Screen):
     pass
 
 
-class WindowManager(ScreenManager):
-    pass
-
-
 # This needs to be global in order for the screen manager to lead the screens.
 Builder.load_file("frontend/password_manager.kv")
 
