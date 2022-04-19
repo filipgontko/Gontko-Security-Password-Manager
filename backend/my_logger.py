@@ -1,4 +1,5 @@
 import logging
+import sys
 import time
 import os
 
@@ -21,6 +22,7 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
 # Creating logger which will be used in other files.
 file_handler = logging.FileHandler(LOG_FILE)
+file_handler = logging.StreamHandler(sys.stdout)
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
 
