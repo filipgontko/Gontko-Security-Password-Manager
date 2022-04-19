@@ -26,7 +26,9 @@ class Signup(Screen):
 
 
 class LoggedIn(Screen):
-    pass
+    def __init__(self, password_manager):
+        super(LoggedIn, self).__init__()
+        self.password_manager = password_manager
 
 
 # This needs to be global in order for the screen manager to lead the screens.
@@ -45,5 +47,5 @@ class PasswordManagerApp(MDApp):
         if self.password_manager.master_db.is_empty():
             sm.add_widget(Signup(self.password_manager))
         sm.add_widget(Login(self.password_manager))
-        sm.add_widget(Third(name="third"))
+        sm.add_widget(LoggedIn(self.password_manager))
         return sm
