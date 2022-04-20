@@ -2,7 +2,6 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivymd.icon_definitions import md_icons
 from kivymd.uix.list import OneLineListItem
 
 
@@ -40,17 +39,19 @@ class LoggedIn(Screen):
     def logout(self):
         self.password_manager.logout()
 
+    def add_credentials(self, site, username, password):
+        self.password_manager.add_new_credentials(site, username, password)
+
     def set_list_credentials(self, text="", search=False):
-        def add_credential_item(site_name):
+        def add_credential_item(website):
             self.ids.rv.data.append(
                 {
                     "viewclass": "CustomOneLineCredsListItem",
-                    "text": site_name,
+                    "text": website,
                     "callback": lambda x: x,
                 }
             )
         self.ids.rv.data = []
-        # TODO: Change to search the list of credentials
         for site_name in self.password_manager.get_credentials():
             if search:
                 if text in site_name:

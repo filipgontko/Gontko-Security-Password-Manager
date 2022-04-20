@@ -50,8 +50,10 @@ def encrypt_message(message):
     :return: Encrypted message.
     """
     salt = secrets.token_bytes(BLOCK_SIZE)
-    master_password = input("Master Password: ")
-    key_base = load_crypto_key_base_from_file() + master_password
+    random_string = "KsZQRTFKAfoA2GhWle2K"
+    if not key_exists():
+        generate_crypto_key_base()
+    key_base = load_crypto_key_base_from_file() + random_string
     kdf = PBKDF2(key_base, salt, 64, 1000)
     master_key = kdf[:32]
     cipher_config = AES.new(master_key, AES.MODE_GCM)
@@ -78,8 +80,8 @@ def decrypt_message(encrypted_message):
     except IOError as e:
         return None
 
-    master_password = input("Master Password: ")
-    key_base = load_crypto_key_base_from_file() + master_password
+    random_string = "KsZQRTFKAfoA2GhWle2K"
+    key_base = load_crypto_key_base_from_file() + random_string
     kdf = PBKDF2(key_base, salt, 64, 1000)
     master_key = kdf[:32]
     cipher_config = AES.new(master_key, AES.MODE_GCM, nonce=nonce)

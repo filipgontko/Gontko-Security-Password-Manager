@@ -6,22 +6,6 @@ from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
 
 
-def prepare_credentials(password_change=False):
-    """
-    Prepare credentials that will be either created, updated, or deleted.
-    Returns:
-        Credentials object
-    """
-    site = input("Website: ")
-    username = input("Username: ")
-    password = None
-    if password_change:
-        password = input("New password: ")
-    credentials = Credentials(site, username, password)
-    password = "*********"  # Overwrite password so it doesn't stay in memory.
-    return credentials
-
-
 def check_email(email):
     """
     Checks if e-mail is in valid format.
@@ -121,7 +105,7 @@ class PasswordManager:
         self.user_logged_in = False
         # TODO: Show login screen
 
-    def add_new_credentials(self):
+    def add_new_credentials(self, site, username, password):
         """
         Adds new credentials to the password manager.
         Returns:
@@ -130,7 +114,7 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 logger.info("Adding new credentials into password_manager.")
-                credentials = prepare_credentials(True)
+                credentials = Credentials(site, username, password)
                 self.credentials_db.insert_credentials(credentials)
                 logger.info("Credentials added successfully.")
                 return True
@@ -140,10 +124,13 @@ class PasswordManager:
         logger.error("User not logged in.")
         return False
 
-    def edit_credentials(self, switcher):
+    def edit_credentials(self, site, username, password, switcher):
         """
         Edit credentials in password manager.
         Args:
+            site: Website
+            username: Username
+            password: Password
             switcher: String specifying what credentials to edit (site, username or password).
 
         Returns:
@@ -154,15 +141,15 @@ class PasswordManager:
                 logger.info("Editing credentials within password_manager.")
                 if switcher == "password":
                     logger.info("Editing password...")
-                    credentials = prepare_credentials(True)
+                    credentials = Credentials(site, username, password)
                     self.credentials_db.edit_password(credentials)
                 elif switcher == "username":
                     logger.info("Editing username...")
-                    credentials = prepare_credentials()
+                    credentials = Credentials(site, username, password)
                     # TODO: Edit username in db.
                 elif switcher == "site":
                     logger.info("Editing website...")
-                    credentials = prepare_credentials()
+                    credentials = Credentials(site, username, password)
                     # TODO: Edit site in db.
                 else:
                     return False
@@ -174,16 +161,19 @@ class PasswordManager:
         logger.error("User not logged in.")
         return False
 
-    def remove_credentials(self):
+    def remove_credentials(self, site, username):
         """
         Remove credentials from password manager.
+        Args:
+            site: Website
+            username: Username
         Returns:
             True if successful, False otherwise.
         """
         try:
             if self.check_user_logged_in():
                 logger.info("Removing credentials from password_manager.")
-                credentials = prepare_credentials()
+                credentials = Credentials(site, username)
                 self.credentials_db.delete_credentials(credentials)
                 logger.info("Credentials deleted successfully.")
                 return True
