@@ -54,10 +54,10 @@ class LoggedIn(Screen):
         self.ids.rv.data = []
         for site_name in self.password_manager.get_credentials():
             if search:
-                if text in site_name:
-                    add_credential_item(site_name)
+                if text in site_name[0]:
+                    add_credential_item(site_name[0])
             else:
-                add_credential_item(site_name)
+                add_credential_item(site_name[0])
 
     data = {
         'Add credentials': 'plus-circle-outline',
