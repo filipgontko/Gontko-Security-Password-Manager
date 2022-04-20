@@ -1,6 +1,9 @@
 from kivy.lang import Builder
+from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivymd.icon_definitions import md_icons
+from kivymd.uix.list import OneLineIconListItem
 
 
 class Login(Screen):
@@ -25,6 +28,10 @@ class Signup(Screen):
         self.password_manager.sign_up(email, password)
 
 
+class CustomOneLineIconListItem(OneLineIconListItem):
+    icon = StringProperty()
+
+
 class LoggedIn(Screen):
     def __init__(self, password_manager):
         super(LoggedIn, self).__init__()
@@ -34,7 +41,22 @@ class LoggedIn(Screen):
         self.password_manager.logout()
 
     def set_list_credentials(self, text="", search=False):
-        pass
+        def add_icon_item(name_icon):
+            self.ids.rv.data.append(
+                {
+                    "viewclass": "CustomOneLineIconListItem",
+                    "icon": name_icon,
+                    "text": name_icon,
+                    "callback": lambda x: x,
+                }
+            )
+        self.ids.rv.data = []
+        for name_icon in md_icons.keys():
+            if search:
+                if text in name_icon:
+                    add_icon_item(name_icon)
+            else:
+                add_icon_item(name_icon)
 
     data = {
         'Add credentials': 'plus-circle-outline',
