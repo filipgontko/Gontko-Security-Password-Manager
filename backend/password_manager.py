@@ -201,9 +201,8 @@ class PasswordManager:
         """
         try:
             if self.check_user_logged_in():
-                logger.info("Getting list of credentials.")
-                credentials = prepare_credentials()
-                creds_list = self.credentials_db.view_credentials(credentials)
+                logger.info("Getting list of all credentials.")
+                creds_list = self.credentials_db.view_all_credentials()
                 return creds_list
         except Exception as e:
             return None
