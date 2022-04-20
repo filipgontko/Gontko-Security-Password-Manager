@@ -33,6 +33,9 @@ class LoggedIn(Screen):
     def logout(self):
         self.password_manager.logout()
 
+    def set_list_credentials(self, text="", search=False):
+        pass
+
     data = {
         'Add credentials': 'plus-circle-outline',
         'Edit credentials': 'pencil-outline',
