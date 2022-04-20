@@ -39,4 +39,4 @@ class Credentials:
         self.password = password
 
     def __del__(self):
-        logger.info("Credentials deleted.")
+        logger.info("Credentials object deleted from memory.")
