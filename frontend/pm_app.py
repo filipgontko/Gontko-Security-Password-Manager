@@ -2,7 +2,7 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivymd.uix.list import OneLineListItem
+from kivymd.uix.list import ThreeLineListItem
 
 
 class Login(Screen):
@@ -27,7 +27,7 @@ class Signup(Screen):
         self.password_manager.sign_up(email, password)
 
 
-class CustomOneLineCredsListItem(OneLineListItem):
+class CustomThreeLineCredsListItem(ThreeLineListItem):
     credential = StringProperty()
 
 
@@ -43,21 +43,23 @@ class LoggedIn(Screen):
         self.password_manager.add_new_credentials(site, username, password)
 
     def set_list_credentials(self, text="", search=False):
-        def add_credential_item(website):
+        def add_credential_item(website, username):
             self.ids.rv.data.append(
                 {
-                    "viewclass": "CustomOneLineCredsListItem",
+                    "viewclass": "CustomThreeLineCredsListItem",
                     "text": website,
+                    "secondary_text": "username: {}".format(username),
+                    "tertiary_text": "pass",
                     "callback": lambda x: x,
                 }
             )
         self.ids.rv.data = []
-        for site_name in self.password_manager.get_credentials():
+        for creds in self.password_manager.get_credentials():
             if search:
-                if text in site_name[0]:
-                    add_credential_item(site_name[0])
+                if text in creds[0]:
+                    add_credential_item(creds[0], creds[1])
             else:
-                add_credential_item(site_name[0])
+                add_credential_item(creds[0], creds[1])
 
     data = {
         'Add credentials': 'plus-circle-outline',
