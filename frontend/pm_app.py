@@ -51,7 +51,7 @@ class PasswordManagerApp(MDApp):
 
     def build(self):
         self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "BlueGray"
+        self.theme_cls.primary_palette = "Amber"
         self.theme_cls.accent_palette = "Orange"
         sm = ScreenManager()
         if self.password_manager.master_db.is_empty():
