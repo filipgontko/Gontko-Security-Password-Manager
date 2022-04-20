@@ -50,7 +50,7 @@ class LoggedIn(Screen):
                     "text": website,
                     "secondary_text": "username: {}".format(username),
                     "tertiary_text": "pass",
-                    "callback": lambda x: x,
+                    "callback": lambda x: x
                 }
             )
         self.ids.rv.data = []
