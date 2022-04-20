@@ -59,3 +59,6 @@ class PasswordManagerApp(MDApp):
         sm.add_widget(Login(self.password_manager))
         sm.add_widget(LoggedIn(self.password_manager))
         return sm
+
+    def navigation_draw(self):
+        pass
