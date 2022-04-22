@@ -50,9 +50,11 @@ class LoggedIn(Screen):
                     "text": website,
                     "secondary_text": "username: {}".format(username),
                     "tertiary_text": "pass",
+                    "on_release": lambda: self.password_manager.logout(),
                     "callback": lambda x: x
                 }
             )
+        # TODO: Open widget with credentials on release
         self.ids.rv.data = []
         for creds in self.password_manager.get_credentials():
             if search:
@@ -89,4 +91,7 @@ class PasswordManagerApp(MDApp):
         return sm
 
     def navigation_draw(self):
+        """
+        Navigation to be shown. Currently, doing nothing as it's used as logo only.a
+        """
         pass
