@@ -2,7 +2,7 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivymd.uix.list import ThreeLineListItem
+from kivymd.uix.list import ThreeLineListItem, TwoLineListItem
 from kivymd.uix.relativelayout import MDRelativeLayout
 
 
@@ -33,7 +33,7 @@ class Signup(Screen):
         self.password_manager.sign_up(email, password)
 
 
-class CustomThreeLineCredsListItem(ThreeLineListItem):
+class CustomTwoLineCredsListItem(TwoLineListItem):
     credential = StringProperty()
 
 
@@ -52,10 +52,9 @@ class LoggedIn(Screen):
         def add_credential_item(website, username):
             self.ids.rv.data.append(
                 {
-                    "viewclass": "CustomThreeLineCredsListItem",
+                    "viewclass": "CustomTwoLineCredsListItem",
                     "text": website,
                     "secondary_text": "username: {}".format(username),
-                    "tertiary_text": "pass",
                     "on_release": lambda: self.password_manager.logout(),
                     "callback": lambda x: x
                 }
