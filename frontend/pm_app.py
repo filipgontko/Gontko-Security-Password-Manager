@@ -47,6 +47,7 @@ class LoggedIn(Screen):
 
     def view_credentials(self):
         self.parent.current = "creds_view"
+        self.parent.transition.direction = "left"
 
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
