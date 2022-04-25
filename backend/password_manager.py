@@ -114,6 +114,9 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 logger.info("Adding new credentials into password_manager.")
+                if site == "" or username == "" or password == "":
+                    logger.info("Credentials contain empty string. Not adding to DB.")
+                    return False
                 credentials = Credentials(site, username, password)
                 self.credentials_db.insert_credentials(credentials)
                 logger.info("Credentials added successfully.")
