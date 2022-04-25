@@ -2,7 +2,7 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivymd.uix.list import ThreeLineListItem, TwoLineListItem
+from kivymd.uix.list import TwoLineListItem
 from kivymd.uix.relativelayout import MDRelativeLayout
 
 
