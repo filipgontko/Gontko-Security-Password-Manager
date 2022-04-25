@@ -5,6 +5,15 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivymd.uix.list import TwoLineListItem
 
 
+class Signup(Screen):
+    def __init__(self, password_manager):
+        super(Signup, self).__init__()
+        self.password_manager = password_manager
+
+    def signup(self, email, password):
+        self.password_manager.sign_up(email, password)
+
+
 class Login(Screen):
     def __init__(self, password_manager):
         super(Login, self).__init__()
@@ -16,15 +25,6 @@ class Login(Screen):
 
     def forgot_password(self):
         pass
-
-
-class Signup(Screen):
-    def __init__(self, password_manager):
-        super(Signup, self).__init__()
-        self.password_manager = password_manager
-
-    def signup(self, email, password):
-        self.password_manager.sign_up(email, password)
 
 
 class CustomTwoLineCredsListItem(TwoLineListItem):
