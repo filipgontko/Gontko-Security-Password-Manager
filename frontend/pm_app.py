@@ -45,6 +45,9 @@ class LoggedIn(Screen):
     def logout(self):
         self.password_manager.logout()
 
+    def view_credentials(self):
+        self.parent.current = "creds_view"
+
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
 
@@ -55,7 +58,7 @@ class LoggedIn(Screen):
                     "viewclass": "CustomTwoLineCredsListItem",
                     "text": website,
                     "secondary_text": "username: {}".format(username),
-                    "on_release": lambda: self.password_manager.logout(),
+                    "on_release": lambda: self.view_credentials(),
                     "callback": lambda x: x
                 }
             )
@@ -73,6 +76,12 @@ class LoggedIn(Screen):
         'Edit credentials': 'pencil-outline',
         'Generate password': 'key-outline',
     }
+
+
+class CredentialsView(Screen):
+    def __init__(self, password_manager):
+        super(CredentialsView, self).__init__()
+        self.password_manager = password_manager
 
 
 # This needs to be global in order for the screen manager to lead the screens.
@@ -93,10 +102,11 @@ class PasswordManagerApp(MDApp):
             sm.add_widget(Signup(self.password_manager))
         sm.add_widget(Login(self.password_manager))
         sm.add_widget(LoggedIn(self.password_manager))
+        sm.add_widget(CredentialsView(self.password_manager))
         return sm
 
     def navigation_draw(self):
         """
-        Navigation to be shown. Currently, doing nothing as it's used as logo only.a
+        Navigation to be shown. Currently, doing nothing as it's used as logo only.
         """
         pass
