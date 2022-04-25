@@ -1,4 +1,6 @@
 import re
+
+from backend import crypto
 from backend.credentials import Credentials
 from backend.crypto import compare_master_password_hash, create_master_key
 from backend.databases.master_key_database import MasterKeyDB
@@ -201,3 +203,11 @@ class PasswordManager:
             return None
         logger.error("User not logged in.")
         return None
+
+    def generate_password(self):
+        """
+        Generate password on button click.
+        Returns:
+            Randomly generate password.
+        """
+        return crypto.generate_password()

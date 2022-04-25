@@ -52,6 +52,9 @@ class LoggedIn(Screen):
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
 
+    def generate_password(self):
+        return self.password_manager.generate_password()
+
     def set_list_credentials(self, text="", search=False):
         def add_credential_item(website, username):
             self.ids.rv.data.append(
