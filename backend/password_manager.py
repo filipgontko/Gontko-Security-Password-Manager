@@ -204,10 +204,10 @@ class PasswordManager:
         logger.error("User not logged in.")
         return None
 
-    def generate_password(self):
+    def generate_password(self, length):
         """
         Generate password on button click.
         Returns:
             Randomly generate password.
         """
-        return crypto.generate_password()
+        return crypto.generate_password(length)

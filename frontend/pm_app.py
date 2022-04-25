@@ -52,8 +52,8 @@ class LoggedIn(Screen):
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
 
-    def generate_password(self):
-        return self.password_manager.generate_password()
+    def generate_password(self, length=12):
+        return self.password_manager.generate_password(length)
 
     def set_list_credentials(self, text="", search=False):
         def add_credential_item(website, username):
@@ -74,12 +74,6 @@ class LoggedIn(Screen):
                     add_credential_item(creds[0], creds[1])
             else:
                 add_credential_item(creds[0], creds[1])
-
-    data = {
-        'Add credentials': 'plus-circle-outline',
-        'Edit credentials': 'pencil-outline',
-        'Generate password': 'key-outline',
-    }
 
 
 class CredentialsView(Screen):
