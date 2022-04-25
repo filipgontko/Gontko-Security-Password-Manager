@@ -39,9 +39,11 @@ class LoggedIn(Screen):
     def logout(self):
         self.password_manager.logout()
 
-    def view_credentials(self):
+    def view_credentials(self, website, username):
         self.parent.current = "creds_view"
         self.parent.transition.direction = "left"
+        self.password_manager.site = website
+        self.password_manager.username = username
 
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
@@ -56,11 +58,11 @@ class LoggedIn(Screen):
                     "viewclass": "CustomTwoLineCredsListItem",
                     "text": website,
                     "secondary_text": "username: {}".format(username),
-                    "on_release": lambda: self.view_credentials(),
+                    "on_release": lambda: self.view_credentials(website, username),
                     "callback": lambda x: x
                 }
             )
-        # TODO: Open widget with credentials on release
+
         self.ids.rv.data = []
         for creds in self.password_manager.get_credentials():
             if search:
@@ -75,6 +77,11 @@ class CredentialsView(Screen):
         super(CredentialsView, self).__init__()
         self.password_manager = password_manager
 
+    def get_site(self):
+        return self.password_manager.site
+
+    def get_username(self):
+        self.ids.username.text = self.password_manager.username
 
 # This needs to be global in order for the screen manager to lead the screens.
 Builder.load_file("frontend/password_manager.kv")
