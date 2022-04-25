@@ -2,7 +2,7 @@ import sqlite3
 
 from backend.databases.database import Database
 from backend.my_logger import logger
-from backend.crypto import encrypt_message
+from backend.crypto import encrypt_message, decrypt_message
 
 
 class CredentialsDB(Database):
@@ -94,7 +94,8 @@ class CredentialsDB(Database):
             cursor.execute(get_pass_query, (credentials.site, credentials.username))
             self.connection.commit()
             record = cursor.fetchone()[0]
-            return record
+            decrypted_password = decrypt_message(record)
+            return decrypted_password
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
             return None
@@ -131,7 +132,7 @@ class CredentialsDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            view_query = """SELECT site, username FROM credentials_table 
+            view_query = """SELECT site, username, password FROM credentials_table 
                             WHERE site = ? AND username = ?"""
             cursor.execute(view_query, (credentials.site, credentials.username))
             self.connection.commit()

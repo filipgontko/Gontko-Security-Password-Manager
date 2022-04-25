@@ -53,7 +53,7 @@ class PasswordManagerTestCase(unittest.TestCase):
     def test_get_credentials(self):
         password_manager = PasswordManager()
         password_manager.login()
-        result = password_manager.get_credentials()
+        result = password_manager.get_all_credentials()
         self.assertEqual(result, [])
 
 

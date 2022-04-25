@@ -64,12 +64,15 @@ class LoggedIn(Screen):
             )
 
         self.ids.rv.data = []
-        for creds in self.password_manager.get_credentials():
-            if search:
-                if text in creds[0]:
+        try:
+            for creds in self.password_manager.get_all_credentials():
+                if search:
+                    if text in creds[0]:
+                        add_credential_item(creds[0], creds[1])
+                else:
                     add_credential_item(creds[0], creds[1])
-            else:
-                add_credential_item(creds[0], creds[1])
+        except Exception as e:
+            return None
 
 
 class CredentialsView(Screen):
@@ -81,7 +84,14 @@ class CredentialsView(Screen):
         return self.password_manager.site
 
     def get_username(self):
-        self.ids.username.text = self.password_manager.username
+        return self.password_manager.username
+
+    def get_password(self):
+        try:
+            return self.password_manager.get_password_from_db(self.password_manager.site, self.password_manager.username)
+        except Exception as e:
+            return ""
+
 
 # This needs to be global in order for the screen manager to lead the screens.
 Builder.load_file("frontend/password_manager.kv")

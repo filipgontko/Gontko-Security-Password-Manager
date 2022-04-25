@@ -190,7 +190,7 @@ class PasswordManager:
         logger.error("User not logged in.")
         return False
 
-    def get_credentials(self):
+    def get_all_credentials(self):
         """
         Get credentials to be viewed.
         Returns:
@@ -200,6 +200,40 @@ class PasswordManager:
             if self.check_user_logged_in():
                 logger.info("Getting list of all credentials.")
                 creds_list = self.credentials_db.view_all_credentials()
+                return creds_list
+        except Exception as e:
+            return None
+        logger.error("User not logged in.")
+        return None
+
+    def get_credentials(self, site, username):
+        """
+        Get credentials to be viewed.
+        Returns:
+            List of credentials if successful, False otherwise.
+        """
+        try:
+            if self.check_user_logged_in():
+                logger.info("Getting specified credentials.")
+                creds = Credentials(site, username)
+                creds_list = self.credentials_db.view_credentials(creds)
+                return creds_list
+        except Exception as e:
+            return None
+        logger.error("User not logged in.")
+        return None
+
+    def get_password_from_db(self, site, username):
+        """
+        Get credentials to be viewed.
+        Returns:
+            List of credentials if successful, False otherwise.
+        """
+        try:
+            if self.check_user_logged_in():
+                logger.info("Getting password for specified credentials.")
+                creds = Credentials(site, username)
+                creds_list = self.credentials_db.get_password(creds)
                 return creds_list
         except Exception as e:
             return None
