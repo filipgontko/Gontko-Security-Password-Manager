@@ -132,12 +132,16 @@ class CredentialsView(Screen):
 
     def close_dialog(self, obj):
         self.dialog.dismiss()
+        self.dialog = None
 
     def save_credentials(self, obj):
-        pass
+        self.dialog.dismiss()
+        self.dialog = None
+        # TODO: Add password manager edit credentials
 
     def delete_credentials(self, obj):
         self.dialog.dismiss()
+        self.dialog = None
         self.password_manager.remove_credentials(self.password_manager.site, self.password_manager.username)
         self.parent.current = "logged_in"
         self.parent.transition.direction = "right"
