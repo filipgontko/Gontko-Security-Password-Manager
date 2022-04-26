@@ -76,7 +76,7 @@ class LoggedIn(Screen):
             return None
 
 
-class ClickableTextFieldRound(MDRelativeLayout):
+class ClickableEyeIcon(MDRelativeLayout):
     text = StringProperty()
 
 
