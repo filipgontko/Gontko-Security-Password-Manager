@@ -2,6 +2,8 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivymd.uix.button import MDRoundFlatButton, MDFillRoundFlatButton
+from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import TwoLineListItem
 from kivymd.uix.relativelayout import MDRelativeLayout
 
@@ -83,6 +85,7 @@ class ClickableEyeIcon(MDRelativeLayout):
 class CredentialsView(Screen):
     def __init__(self, password_manager):
         super(CredentialsView, self).__init__()
+        self.dialog = None
         self.password_manager = password_manager
 
     def on_enter(self):
@@ -101,6 +104,30 @@ class CredentialsView(Screen):
             return self.password_manager.get_password_from_db(self.password_manager.site, self.password_manager.username)
         except Exception as e:
             return ""
+
+    def save_credentials(self):
+        pass
+
+    def show_dialog(self):
+        if not self.dialog:
+            self.dialog = MDDialog(
+                title="Delete credentials?",
+                text="Are you sure you want to delete these credentials forever?",
+                buttons=[
+                    MDRoundFlatButton(text="CANCEL", on_release=self.close_dialog),
+                    MDFillRoundFlatButton(text="DELETE", on_release=self.delete_credentials)
+                ],
+            )
+        self.dialog.open()
+
+    def delete_credentials(self, obj):
+        self.dialog.dismiss()
+        self.password_manager.remove_credentials(self.password_manager.site, self.password_manager.username)
+        self.parent.current = "logged_in"
+        self.parent.transition.direction = "right"
+
+    def close_dialog(self, obj):
+        self.dialog.dismiss()
 
     def generate_password(self, length=12):
         return self.password_manager.generate_password(length)
