@@ -3,6 +3,7 @@ from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivymd.uix.list import TwoLineListItem
+from kivymd.uix.relativelayout import MDRelativeLayout
 
 
 class Signup(Screen):
@@ -73,6 +74,10 @@ class LoggedIn(Screen):
                     add_credential_item(creds[0], creds[1])
         except Exception as e:
             return None
+
+
+class ClickableTextFieldRound(MDRelativeLayout):
+    text = StringProperty()
 
 
 class CredentialsView(Screen):
