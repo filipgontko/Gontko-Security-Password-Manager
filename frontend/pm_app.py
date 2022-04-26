@@ -80,6 +80,11 @@ class CredentialsView(Screen):
         super(CredentialsView, self).__init__()
         self.password_manager = password_manager
 
+    def on_enter(self):
+        self.ids.website.text = self.get_site()
+        self.ids.username.text = self.get_username()
+        self.ids.passwd.text = self.get_password()
+
     def get_site(self):
         return self.password_manager.site
 
