@@ -105,11 +105,13 @@ class CredentialsView(Screen):
         except Exception as e:
             return ""
 
-    def save_credentials(self):
-        pass
-
-    def show_dialog(self):
+    def show_dialog(self, reason):
         if not self.dialog:
+            self.set_dialog_context(reason)
+        self.dialog.open()
+
+    def set_dialog_context(self, reason):
+        if reason == "delete":
             self.dialog = MDDialog(
                 title="Delete credentials?",
                 text="Are you sure you want to delete these credentials forever?",
@@ -118,16 +120,27 @@ class CredentialsView(Screen):
                     MDFillRoundFlatButton(text="DELETE", on_release=self.delete_credentials)
                 ],
             )
-        self.dialog.open()
+        if reason == "save":
+            self.dialog = MDDialog(
+                title="Edit credentials?",
+                text="Are you sure you want to overwrite current credentials?",
+                buttons=[
+                    MDRoundFlatButton(text="CANCEL", on_release=self.close_dialog),
+                    MDFillRoundFlatButton(text="SAVE", on_release=self.save_credentials)
+                ],
+            )
+
+    def close_dialog(self, obj):
+        self.dialog.dismiss()
+
+    def save_credentials(self, obj):
+        pass
 
     def delete_credentials(self, obj):
         self.dialog.dismiss()
         self.password_manager.remove_credentials(self.password_manager.site, self.password_manager.username)
         self.parent.current = "logged_in"
         self.parent.transition.direction = "right"
-
-    def close_dialog(self, obj):
-        self.dialog.dismiss()
 
     def generate_password(self, length=12):
         return self.password_manager.generate_password(length)

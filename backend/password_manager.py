@@ -149,7 +149,7 @@ class PasswordManager:
                 if switcher == "password":
                     logger.info("Editing password...")
                     credentials = Credentials(site, username, password)
-                    self.credentials_db.edit_password(credentials)
+                    self.credentials_db.edit_credentials(credentials)
                 elif switcher == "username":
                     logger.info("Editing username...")
                     credentials = Credentials(site, username, password)
