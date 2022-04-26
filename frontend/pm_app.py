@@ -102,6 +102,9 @@ class CredentialsView(Screen):
         except Exception as e:
             return ""
 
+    def generate_password(self, length=12):
+        return self.password_manager.generate_password(length)
+
 
 # This needs to be global in order for the screen manager to lead the screens.
 Builder.load_file("frontend/password_manager.kv")
