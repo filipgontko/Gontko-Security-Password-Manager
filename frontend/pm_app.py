@@ -63,9 +63,6 @@ class LoggedIn(Screen):
 
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
-        self.ids.website.required = False
-        self.ids.username.required = False
-        self.ids.passwd.required = False
 
     def generate_password(self, length=12):
         return self.password_manager.generate_password(length)
