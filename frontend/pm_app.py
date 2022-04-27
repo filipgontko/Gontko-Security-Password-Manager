@@ -39,6 +39,18 @@ class LoggedIn(Screen):
         super(LoggedIn, self).__init__()
         self.password_manager = password_manager
 
+    def on_enter(self):
+        self.ids.search_field.text = "\r"
+        self.ids.search_field.text = ""
+
+    def on_leave(self):
+        self.ids.search_field.text = ""
+        self.ids.website.text = ""
+        self.ids.username.text = ""
+        self.ids.passwd.text = ""
+        self.ids.generate_pwd.text = ""
+        self.ids.strength_slider.value = 12
+
     def logout(self):
         self.password_manager.logout()
 
@@ -51,11 +63,14 @@ class LoggedIn(Screen):
 
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
+        self.ids.website.required = False
+        self.ids.username.required = False
+        self.ids.passwd.required = False
 
     def generate_password(self, length=12):
         return self.password_manager.generate_password(length)
 
-    def set_list_credentials(self, text="", search=False):
+    def set_list_credentials(self, text="", search=True):
         def add_credential_item(cred_id, website, username):
             self.ids.rv.data.append(
                 {
@@ -93,6 +108,13 @@ class CredentialsView(Screen):
         self.ids.website.text = self.get_site()
         self.ids.username.text = self.get_username()
         self.ids.passwd.text = self.get_password()
+
+    def on_leave(self):
+        self.ids.website.text = ""
+        self.ids.username.text = ""
+        self.ids.passwd.text = ""
+        self.ids.generate_pwd.text = ""
+        self.ids.strength_slider.value = 12
 
     def get_site(self):
         return self.password_manager.credential_site
