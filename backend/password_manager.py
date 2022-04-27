@@ -169,20 +169,18 @@ class PasswordManager:
         logger.error("User not logged in.")
         return False
 
-    def remove_credentials(self, site, username):
+    def remove_credentials(self, credential_id):
         """
         Remove credentials from password manager.
         Args:
-            site: Website
-            username: Username
+            credential_id: ID of the credential to be removed.
         Returns:
             True if successful, False otherwise.
         """
         try:
             if self.check_user_logged_in():
                 logger.info("Removing credentials from password_manager.")
-                credentials = Credentials(site, username)
-                self.credentials_db.delete_credentials(credentials)
+                self.credentials_db.delete_credentials(credential_id)
                 logger.info("Credentials deleted successfully.")
                 return True
         except Exception as e:

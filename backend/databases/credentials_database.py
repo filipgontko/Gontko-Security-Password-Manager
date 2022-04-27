@@ -102,45 +102,23 @@ class CredentialsDB(Database):
         finally:
             self.disconnect_db()
 
-    def delete_credentials(self, credentials):
+    def delete_credentials(self, credential_id):
         """
         Delete credentials from the database.
-        :param credentials: Credentials object to be removed.
+        :param credential_id: Credential ID to be removed.
         :return: bool: True if successful, False otherwise.
         """
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            delete_query = """DELETE FROM credentials_table 
-                            WHERE site = ? AND username = ?"""
-            cursor.execute(delete_query, (credentials.site, credentials.username))
+            delete_query = """DELETE FROM credentials_table WHERE id = {}""".format(credential_id)
+            cursor.execute(delete_query)
             self.connection.commit()
             cursor.close()
             return True
         except sqlite3.Error as error:
             logger.error("Error while deleting - {}".format(error))
             return False
-        finally:
-            self.disconnect_db()
-
-    def view_credentials(self, credentials):
-        """
-        View stored sites and usernames in the database
-        Returns:
-            List of credentials tuples (site, username)
-        """
-        try:
-            self.connect_db()
-            cursor = self.connection.cursor()
-            view_query = """SELECT site, username, password FROM credentials_table 
-                            WHERE site = ? AND username = ?"""
-            cursor.execute(view_query, (credentials.site, credentials.username))
-            self.connection.commit()
-            record = cursor.fetchall()
-            return record
-        except sqlite3.Error as error:
-            logger.error("Error while getting credentials - {}".format(error))
-            return None
         finally:
             self.disconnect_db()
 
