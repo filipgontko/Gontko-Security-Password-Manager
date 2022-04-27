@@ -27,20 +27,17 @@ class PasswordManager:
     """
     Class representing password manager.
     """
-    def __init__(self, user_logged_in=False, email=None, credential_site=None, credential_username=None, credential_id=None):
+    def __init__(self):
         """
         Initialize password manager.
-        Args:
-            user_logged_in: True if user is logged in, False otherwise.
-            email: E-mail address of the user.
         """
-        self.user_logged_in = user_logged_in
-        self.email = email
+        self.user_logged_in = False
+        self.email = None
         self.master_db = MasterKeyDB()
         self.credentials_db = CredentialsDB()
-        self.credential_site = credential_site
-        self.credential_username = credential_username
-        self.credential_id = credential_id
+        self.credential_site = None
+        self.credential_username = None
+        self.credential_id = None
 
     def sign_up(self, email, password):
         """
