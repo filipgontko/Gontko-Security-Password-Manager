@@ -110,9 +110,6 @@ class CredentialsView(Screen):
         self.ids.passwd.text = self.get_password()
 
     def on_leave(self):
-        self.ids.website.text = ""
-        self.ids.username.text = ""
-        self.ids.passwd.text = ""
         self.ids.generate_pwd.text = ""
         self.ids.strength_slider.value = 12
 
