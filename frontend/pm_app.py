@@ -91,10 +91,6 @@ class LoggedIn(Screen):
             return None
 
 
-class ClickableEyeIcon(MDRelativeLayout):
-    text = StringProperty()
-
-
 class CredentialsView(Screen):
     def __init__(self, password_manager):
         super(CredentialsView, self).__init__()
