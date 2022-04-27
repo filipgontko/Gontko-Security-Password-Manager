@@ -57,11 +57,12 @@ class CredentialsDB(Database):
             self.disconnect_db()
 
     # TODO: Password history should be accessible at least for the last 3 passwords per site.
-    # TODO: Edit all credentials should be poosible. Add ID as primary key to DB.
-    def edit_credentials(self, credentials, credential_id):
+    # TODO: Edit all credentials should be possible.
+    def edit_credentials(self, credential_id, credentials):
         """
         Edit the credential for a specific site. Change either credential is possible.
         :param credentials: Credentials object for which to store username and password
+        :param credential_id: Credential ID for which to edit credentials.
         :return: bool: True if successful, False otherwise.
         """
         try:
@@ -70,7 +71,7 @@ class CredentialsDB(Database):
             encrypted_password = encrypt_message(credentials.password)
             update_query = """UPDATE credentials_table 
                             SET site = ?, username = ?, password = ?
-                            WHERE id = ?"""
+                            WHERE id = ?;"""
             cursor.execute(update_query, (credentials.site, credentials.username, encrypted_password, credential_id))
             self.connection.commit()
             cursor.close()

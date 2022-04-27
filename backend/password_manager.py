@@ -132,14 +132,14 @@ class PasswordManager:
         logger.error("User not logged in.")
         return False
 
-    def edit_credentials(self, site, username, password, switcher):
+    def edit_credentials(self, cred_id, site, username, password):
         """
         Edit credentials in password manager.
         Args:
+            cred_id: Credential ID
             site: Website
             username: Username
             password: Password
-            switcher: String specifying what credentials to edit (site, username or password).
 
         Returns:
             True if successful, False otherwise.
@@ -147,20 +147,8 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 logger.info("Editing credentials within password_manager.")
-                if switcher == "password":
-                    logger.info("Editing password...")
-                    credentials = Credentials(site, username, password)
-                    self.credentials_db.edit_credentials(credentials)
-                elif switcher == "username":
-                    logger.info("Editing username...")
-                    credentials = Credentials(site, username, password)
-                    # TODO: Edit username in db.
-                elif switcher == "site":
-                    logger.info("Editing website...")
-                    credentials = Credentials(site, username, password)
-                    # TODO: Edit site in db.
-                else:
-                    return False
+                credentials = Credentials(site, username, password)
+                self.credentials_db.edit_credentials(cred_id, credentials)
                 logger.info("Credentials edited successfully.")
                 return True
         except Exception as e:

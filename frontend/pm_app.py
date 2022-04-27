@@ -138,7 +138,10 @@ class CredentialsView(Screen):
     def save_credentials(self, obj):
         self.dialog.dismiss()
         self.dialog = None
-        # TODO: Add password manager edit credentials
+        self.password_manager.edit_credentials(self.password_manager.credential_id,
+                                               self.ids.website.text,
+                                               self.ids.username.text,
+                                               self.ids.passwd.text)
 
     def delete_credentials(self, obj):
         self.dialog.dismiss()
