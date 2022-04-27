@@ -57,7 +57,6 @@ class CredentialsDB(Database):
             self.disconnect_db()
 
     # TODO: Password history should be accessible at least for the last 3 passwords per site.
-    # TODO: Edit all credentials should be possible.
     def edit_credentials(self, credential_id, credentials):
         """
         Edit the credential for a specific site. Change either credential is possible.
