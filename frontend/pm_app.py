@@ -42,11 +42,12 @@ class LoggedIn(Screen):
     def logout(self):
         self.password_manager.logout()
 
-    def view_credentials(self, website, username):
+    def view_credentials(self, credential_id, website, username):
         self.parent.current = "creds_view"
         self.parent.transition.direction = "left"
-        self.password_manager.site = website
-        self.password_manager.username = username
+        self.password_manager.credential_id = credential_id
+        self.password_manager.credential_site = website
+        self.password_manager.credential_username = username
 
     def add_credentials(self, site, username, password):
         self.password_manager.add_new_credentials(site, username, password)
@@ -55,13 +56,13 @@ class LoggedIn(Screen):
         return self.password_manager.generate_password(length)
 
     def set_list_credentials(self, text="", search=False):
-        def add_credential_item(website, username):
+        def add_credential_item(cred_id, website, username):
             self.ids.rv.data.append(
                 {
                     "viewclass": "CustomTwoLineCredsListItem",
                     "text": website,
                     "secondary_text": "username: {}".format(username),
-                    "on_release": lambda: self.view_credentials(website, username),
+                    "on_release": lambda: self.view_credentials(cred_id, website, username),
                     "callback": lambda x: x
                 }
             )
@@ -70,10 +71,10 @@ class LoggedIn(Screen):
         try:
             for creds in self.password_manager.get_all_credentials():
                 if search:
-                    if text in creds[0]:
-                        add_credential_item(creds[0], creds[1])
+                    if text in creds[1]:
+                        add_credential_item(creds[0], creds[1], creds[2])
                 else:
-                    add_credential_item(creds[0], creds[1])
+                    add_credential_item(creds[0], creds[1], creds[2])
         except Exception as e:
             return None
 
@@ -94,14 +95,14 @@ class CredentialsView(Screen):
         self.ids.passwd.text = self.get_password()
 
     def get_site(self):
-        return self.password_manager.site
+        return self.password_manager.credential_site
 
     def get_username(self):
-        return self.password_manager.username
+        return self.password_manager.credential_username
 
     def get_password(self):
         try:
-            return self.password_manager.get_password_from_db(self.password_manager.site, self.password_manager.username)
+            return self.password_manager.get_password_from_db(self.password_manager.credential_id)
         except Exception as e:
             return ""
 
@@ -142,7 +143,7 @@ class CredentialsView(Screen):
     def delete_credentials(self, obj):
         self.dialog.dismiss()
         self.dialog = None
-        self.password_manager.remove_credentials(self.password_manager.site, self.password_manager.username)
+        self.password_manager.remove_credentials(self.password_manager.credential_id)
         self.parent.current = "logged_in"
         self.parent.transition.direction = "right"
 

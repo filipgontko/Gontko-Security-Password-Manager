@@ -19,6 +19,7 @@ class CredentialsDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             create_table_query = """CREATE TABLE IF NOT EXISTS credentials_table (
+                            id INTEGER PRIMARY KEY,
                             site TEXT,
                             username TEXT,
                             password TEXT
@@ -57,7 +58,7 @@ class CredentialsDB(Database):
 
     # TODO: Password history should be accessible at least for the last 3 passwords per site.
     # TODO: Edit all credentials should be poosible. Add ID as primary key to DB.
-    def edit_credentials(self, credentials):
+    def edit_credentials(self, credentials, credential_id):
         """
         Edit the credential for a specific site. Change either credential is possible.
         :param credentials: Credentials object for which to store username and password
@@ -69,8 +70,8 @@ class CredentialsDB(Database):
             encrypted_password = encrypt_message(credentials.password)
             update_query = """UPDATE credentials_table 
                             SET site = ?, username = ?, password = ?
-                            WHERE site = ? AND username = ?"""
-            cursor.execute(update_query, (encrypted_password, credentials.site, credentials.username))
+                            WHERE id = ?"""
+            cursor.execute(update_query, (credentials.site, credentials.username, encrypted_password, credential_id))
             self.connection.commit()
             cursor.close()
             return True
@@ -80,18 +81,17 @@ class CredentialsDB(Database):
         finally:
             self.disconnect_db()
 
-    def get_password(self, credentials):
+    def get_password(self, credential_id):
         """
         Get the password for a specific site.
-        :param credentials: Credentials object for which to retrieve the password.
+        :param credential_id: Credentials object for which to retrieve the password.
         :return: Encrypted password.
         """
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            get_pass_query = """SELECT password FROM credentials_table
-                          WHERE site = ? AND username = ?"""
-            cursor.execute(get_pass_query, (credentials.site, credentials.username))
+            get_pass_query = """SELECT password FROM credentials_table WHERE id = {}""".format(credential_id)
+            cursor.execute(get_pass_query)
             self.connection.commit()
             record = cursor.fetchone()[0]
             decrypted_password = decrypt_message(record)
@@ -153,7 +153,7 @@ class CredentialsDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            view_query = "SELECT site, username FROM credentials_table"
+            view_query = "SELECT id, site, username FROM credentials_table"
             cursor.execute(view_query)
             self.connection.commit()
             record = cursor.fetchall()

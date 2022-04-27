@@ -27,7 +27,7 @@ class PasswordManager:
     """
     Class representing password manager.
     """
-    def __init__(self, user_logged_in=False, email=None, site=None, username=None):
+    def __init__(self, user_logged_in=False, email=None, credential_site=None, credential_username=None, credential_id=None):
         """
         Initialize password manager.
         Args:
@@ -38,8 +38,9 @@ class PasswordManager:
         self.email = email
         self.master_db = MasterKeyDB()
         self.credentials_db = CredentialsDB()
-        self.site = site
-        self.username = username
+        self.credential_site = credential_site
+        self.credential_username = credential_username
+        self.credential_id = credential_id
 
     def sign_up(self, email, password):
         """
@@ -223,7 +224,7 @@ class PasswordManager:
         logger.error("User not logged in.")
         return None
 
-    def get_password_from_db(self, site, username):
+    def get_password_from_db(self, credential_id):
         """
         Get credentials to be viewed.
         Returns:
@@ -232,8 +233,7 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 logger.info("Getting password for specified credentials.")
-                creds = Credentials(site, username)
-                creds_list = self.credentials_db.get_password(creds)
+                creds_list = self.credentials_db.get_password(credential_id)
                 return creds_list
         except Exception as e:
             return None
