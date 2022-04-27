@@ -5,9 +5,9 @@ from backend.my_logger import logger
 
 
 class Database(ABC):
-    def __init__(self, connection=None, table=None):
-        self.connection = connection
+    def __init__(self, table=None):
         self.table = table
+        self.connection = None
 
     def create_table(self):
         pass
