@@ -49,6 +49,8 @@ class LoggedIn(Screen):
         self.ids.passwd.text = ""
         self.ids.generate_pwd.text = ""
         self.ids.strength_slider.value = 12
+        self.ids.passwd.password = True
+        self.ids.eye_icon.icon = "eye-off"
 
     def logout(self):
         self.password_manager.logout()
@@ -105,6 +107,8 @@ class CredentialsView(Screen):
         self.ids.generate_pwd.text = ""
         self.ids.strength_slider.value = 12
         self.ids.strength_meter.value = 0
+        self.ids.passwd.password = True
+        self.ids.eye_icon.icon = "eye-off"
 
     def get_site(self):
         return self.password_manager.credential_site
