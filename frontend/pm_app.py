@@ -104,6 +104,7 @@ class CredentialsView(Screen):
     def on_leave(self):
         self.ids.generate_pwd.text = ""
         self.ids.strength_slider.value = 12
+        self.ids.strength_meter.value = 0
 
     def get_site(self):
         return self.password_manager.credential_site
@@ -116,6 +117,23 @@ class CredentialsView(Screen):
             return self.password_manager.get_password_from_db(self.password_manager.credential_id)
         except Exception as e:
             return ""
+
+    def show_password_strength(self):
+        if len(self.ids.passwd.text) < 12:
+            self.ids.strength_meter.value = 25
+            self.ids.strength_meter.color = [1, 0, 0, 1]
+
+        if 12 <= len(self.ids.passwd.text) < 20:
+            self.ids.strength_meter.value = 50
+            self.ids.strength_meter.color = [1, 0.5, 0, 1]
+
+        if 20 <= len(self.ids.passwd.text) < 28:
+            self.ids.strength_meter.value = 70
+            self.ids.strength_meter.color = [1, 0.8, 0, 1]
+
+        if 28 <= len(self.ids.passwd.text) <= 32:
+            self.ids.strength_meter.value = 100
+            self.ids.strength_meter.color = [0, 1, 0, 1]
 
     def show_dialog(self, reason):
         if not self.dialog:
