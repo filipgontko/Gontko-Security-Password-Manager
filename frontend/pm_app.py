@@ -122,18 +122,22 @@ class CredentialsView(Screen):
         if len(self.ids.passwd.text) < 12:
             self.ids.strength_meter.value = 25
             self.ids.strength_meter.color = [1, 0, 0, 1]
+            self.ids.strength_word.text = "Weak"
 
         if 12 <= len(self.ids.passwd.text) < 20:
             self.ids.strength_meter.value = 50
-            self.ids.strength_meter.color = [1, 0.5, 0, 1]
+            self.ids.strength_meter.color = [1, 0.9, 0, 1]
+            self.ids.strength_word.text = "Moderate"
 
         if 20 <= len(self.ids.passwd.text) < 28:
             self.ids.strength_meter.value = 70
-            self.ids.strength_meter.color = [1, 0.8, 0, 1]
+            self.ids.strength_meter.color = [0.5, 0.9, 0, 1]
+            self.ids.strength_word.text = "Strong"
 
         if 28 <= len(self.ids.passwd.text) <= 32:
             self.ids.strength_meter.value = 100
             self.ids.strength_meter.color = [0, 1, 0, 1]
+            self.ids.strength_word.text = "Very Strong"
 
     def show_dialog(self, reason):
         if not self.dialog:
