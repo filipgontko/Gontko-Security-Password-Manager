@@ -5,7 +5,6 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivymd.uix.button import MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import TwoLineListItem
-from kivymd.uix.relativelayout import MDRelativeLayout
 
 
 class Signup(Screen):
