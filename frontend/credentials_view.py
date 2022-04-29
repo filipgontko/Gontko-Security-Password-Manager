@@ -87,25 +87,38 @@ class CredentialsView(Screen):
         else:
             self.ids.pwned.text = "Your password has not been pwned!"
 
+        self.set_strength_values(strength_word)
+
+    def set_strength_values(self, strength_word):
+        """
+        Set the values for the strength meter to be shown.
+        Args:
+            strength_word: Verbal description of the password strength.
+        """
         if strength_word == "Weak":
-            self.ids.strength_meter.value = 25
-            self.ids.strength_meter.color = [1, 0, 0, 1]
-            self.ids.strength_word.text = strength_word
+            self.prepare_strength_values(25, [1, 0, 0, 1], strength_word)
 
         if strength_word == "Moderate":
-            self.ids.strength_meter.value = 50
-            self.ids.strength_meter.color = [1, 0.9, 0, 1]
-            self.ids.strength_word.text = strength_word
+            self.prepare_strength_values(50, [1, 0.9, 0, 1], strength_word)
 
         if strength_word == "Strong":
-            self.ids.strength_meter.value = 70
-            self.ids.strength_meter.color = [0.5, 0.9, 0, 1]
-            self.ids.strength_word.text = strength_word
+            self.prepare_strength_values(70, [0.5, 0.9, 0, 1], strength_word)
 
         if strength_word == "Very Strong":
-            self.ids.strength_meter.value = 100
-            self.ids.strength_meter.color = [0, 1, 0, 1]
-            self.ids.strength_word.text = strength_word
+            self.prepare_strength_values(100, [0, 1, 0, 1], strength_word)
+
+    def prepare_strength_values(self, value, color, word):
+        """
+        Prepare the value, color and word description of the password strength.
+        Args:
+            value: Value on the strength meter.
+            color: Color of the strength.
+            word: Verbal description of the password strength.
+
+        """
+        self.ids.strength_meter.value = value
+        self.ids.strength_meter.color = color
+        self.ids.strength_word.text = word
 
     def show_dialog(self, reason):
         """
