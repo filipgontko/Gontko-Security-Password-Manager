@@ -7,12 +7,25 @@ from backend.password_manager import generate_password
 
 
 class CredentialsView(Screen):
+    """
+    Screen showing credentials information.
+    On this screen it is possible to delete and edit credentials, and generate passwords.
+    Additionally, it shows the password strength and notifies the user if the password has been pwned.
+    """
     def __init__(self, password_manager):
+        """
+        Initialize CredentialsView
+        Args:
+            password_manager: Password manager object
+        """
         super(CredentialsView, self).__init__()
         self.dialog = None
         self.password_manager = password_manager
 
     def on_enter(self):
+        """
+        Initialize text fields, strength meter and check if pawned, when entering the view.
+        """
         self.ids.website.text = self.get_site()
         self.ids.username.text = self.get_username()
         self.ids.passwd.text = self.get_password()
@@ -20,9 +33,14 @@ class CredentialsView(Screen):
         if check_if_pwned(self.ids.passwd.text):
             self.dialog = MDDialog(text="OOOPS! Your password has been pwned! Change it now")
             self.dialog.open()
-            self.dialog = ""
+            self.dialog = None
 
     def on_leave(self):
+        """
+        Clear the text fields, strength meter and check if pawned, when leaving the view.
+        Returns:
+
+        """
         self.ids.generate_pwd.text = ""
         self.ids.strength_slider.value = 12
         self.ids.strength_meter.value = 0
@@ -32,18 +50,36 @@ class CredentialsView(Screen):
         self.ids.pwned.text = ""
 
     def get_site(self):
+        """
+        Get the site.
+        Returns:
+            Site string
+        """
         return self.password_manager.credential_site
 
     def get_username(self):
+        """
+        Get username.
+        Returns:
+            Username string
+        """
         return self.password_manager.credential_username
 
     def get_password(self):
+        """
+        Get password from DB.
+        Returns:
+            Decrypted password string if successful, empty string otherwise.
+        """
         try:
             return self.password_manager.get_password_from_db(self.password_manager.credential_id)
         except Exception as e:
             return ""
 
     def show_password_strength(self):
+        """
+        Show password strength.
+        """
         strength_word = check_password_strength(self.ids.passwd.text)
 
         if check_if_pwned(self.ids.passwd.text):
@@ -73,12 +109,22 @@ class CredentialsView(Screen):
             self.ids.strength_word.text = strength_word
 
     def show_dialog(self, reason):
+        """
+        Show dialog on screen.
+        Args:
+            reason: delete or save
+        """
         if not self.dialog:
             self.set_dialog_context(reason)
         self.dialog.open()
-        self.dialog = ""
+        self.dialog = None
 
     def set_dialog_context(self, reason):
+        """
+        Set up the dialog context to be shown.
+        Args:
+            reason: delete or save
+        """
         if reason == "delete":
             self.dialog = MDDialog(
                 title="Delete credentials?",
@@ -99,10 +145,20 @@ class CredentialsView(Screen):
             )
 
     def close_dialog(self, obj):
+        """
+        Close the dialog and set it to None.
+        Args:
+            obj: dialog object
+        """
         self.dialog.dismiss()
         self.dialog = None
 
     def save_credentials(self, obj):
+        """
+        Save credentials to the database.
+        Args:
+            obj: dialog object
+        """
         self.dialog.dismiss()
         self.dialog = None
         self.password_manager.edit_credentials(self.password_manager.credential_id,
@@ -111,6 +167,11 @@ class CredentialsView(Screen):
                                                self.ids.passwd.text)
 
     def delete_credentials(self, obj):
+        """
+        Delete credentials from the database.
+        Args:
+            obj: dialog object
+        """
         self.dialog.dismiss()
         self.dialog = None
         self.password_manager.remove_credentials(self.password_manager.credential_id)
@@ -118,4 +179,12 @@ class CredentialsView(Screen):
         self.parent.transition.direction = "right"
 
     def generate_password(self, length=12):
+        """
+        Generate a strong password.
+        Args:
+            length: Length of the password (minimum length is 12 characters).
+
+        Returns:
+            Password string.
+        """
         return generate_password(length)
