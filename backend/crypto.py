@@ -14,6 +14,8 @@ BLOCK_SIZE = 16
 def generate_crypto_key_base():
     """
     Generate and write into a file a crypto key base that will be used to encrypt and decrypt messages.
+    Returns:
+        None
     """
     if not (key_exists()):
         key = generate_password(25)
@@ -27,7 +29,8 @@ def generate_crypto_key_base():
 def key_exists():
     """
     Validate if a key exists
-    :return: True if the key exists, False otherwise
+    Returns:
+         True if the key exists, False otherwise
     """
     return os.path.isfile('secret.key')
 
@@ -35,7 +38,8 @@ def key_exists():
 def load_crypto_key_base_from_file():
     """
     Load the secret key from a file.
-    :return: Crypto key base.
+    Returns:
+         Crypto key base.
     """
     try:
         with open("secret.key", "r") as reader:
@@ -47,8 +51,11 @@ def load_crypto_key_base_from_file():
 def encrypt_message(message):
     """
     Encrypts (AES256) given credentials with a master key consisting of a master password and a key file.
-    :param message: Message to encrypt.
-    :return: Encrypted message.
+    Args:
+        message: Message to encrypt.
+
+    Returns:
+        Encrypted message.
     """
     salt = secrets.token_bytes(BLOCK_SIZE)
     random_string = "KsZQRTFKAfoA2GhWle2K"
@@ -71,8 +78,11 @@ def encrypt_message(message):
 def decrypt_message(encrypted_message):
     """
     Decrypts given credentials with the given master key.
-    :param encrypted_message: File containing encryption parameters and the cipher text.
-    :return: Decrypted message.
+    Args:
+        encrypted_message: File containing encryption parameters and the cipher text.
+
+    Returns:
+        Decrypted message.
     """
     try:
         salt, nonce, tag = [encrypted_message[i:i+16] for i in range(0, 47, 16)]
@@ -94,7 +104,8 @@ def decrypt_message(encrypted_message):
 def create_master_key(master_password):
     """
     Creates a salted hash of the given master password to be stored in the database. PBKDF2-SHA256 is used.
-    :return: Hash of the given master key.
+    Returns:
+         Hash of the given master key.
     """
     salt = secrets.token_bytes(32)
     derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
@@ -112,7 +123,8 @@ def create_master_key(master_password):
 def compare_master_password_hash(master_password):
     """
     Compares the hash of the given master password to the hash of the saved master password hash.
-    :return: Hash of the salted master password.
+    Returns:
+         Hash of the salted master password.
     """
     try:
         with open("master_key_salt.bin", "rb") as file:
@@ -128,8 +140,11 @@ def compare_master_password_hash(master_password):
 def generate_password(length=12):
     """
     Generate a strong password.
-    :param length: Length of the password (minimum length is 12 characters).
-    :return: Password string.
+    Args:
+        length: Length of the password (minimum length is 12 characters).
+
+    Returns:
+        Password string.
     """
     lower = string.ascii_lowercase
     upper = string.ascii_uppercase
@@ -140,7 +155,7 @@ def generate_password(length=12):
     pwd_suggestion = random.sample(all, length)
 
     generated_password = "".join(pwd_suggestion)
-    # TODO: Check if pwd has been pawned.
+
     return generated_password
 
 
