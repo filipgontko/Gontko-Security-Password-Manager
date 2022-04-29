@@ -12,7 +12,8 @@ class MasterKeyDB(Database):
     def create_table(self):
         """
         Create table for storing master key hash and e-mail address it's connected with.
-        :return: bool: True if successful, False otherwise.
+        Returns:
+             True if successful, False otherwise.
         """
         try:
             self.connect_db()
@@ -35,9 +36,12 @@ class MasterKeyDB(Database):
     def insert_master_information(self, master_key_hash, email):
         """
         Insert information into the database.
-        :param email: E-mail address of the account connected to the master key.
-        :param master_key_hash: Master key hash.
-        :return: bool: True if successful, False otherwise.
+        Args:
+            master_key_hash: Master key hash.
+            email: E-mail address of the account connected to the master key.
+
+        Returns:
+            True if successful, False otherwise.
         """
         try:
             self.connect_db()
@@ -58,9 +62,12 @@ class MasterKeyDB(Database):
     def edit_master_information(self, email, master_key_hash_new):
         """
         Edit master key for an account. Hash (PBKDF2-SHA-256) of the new master key will be stored.
-        :param email: E-mail of the account connected to the master key.
-        :param master_key_hash_new: New master key hash.
-        :return: bool: True if successful, False otherwise.
+        Args:
+            email: E-mail of the account connected to the master key.
+            master_key_hash_new: New master key hash.
+
+        Returns:
+            True if successful, False otherwise.
         """
         try:
             self.connect_db()
@@ -82,8 +89,11 @@ class MasterKeyDB(Database):
     def get_master_key_hash(self, email):
         """
         Get the master key hash for the specified account.
-        :param email: E-mail address of the account for which to retrieve the master key hash.
-        :return: Hashed master key
+        Args:
+            email: E-mail address of the account for which to retrieve the master key hash.
+
+        Returns:
+            Hashed master key
         """
         try:
             self.connect_db()
@@ -104,8 +114,11 @@ class MasterKeyDB(Database):
     def check_user_record_exists(self, email):
         """
         Check if the specified user exists.
-        :param email: E-mail address of the account which needs to be checked for existence.
-        :return: True if user with the e-mail address exists, False otherwise.
+        Args:
+            email: E-mail address of the account which needs to be checked for existence.
+
+        Returns:
+            True if user with the e-mail address exists, False otherwise.
         """
         try:
             self.connect_db()
@@ -124,9 +137,9 @@ class MasterKeyDB(Database):
 
     def is_empty(self):
         """
-        CHeck if the database is empty.
+        Check if the database is empty.
         Returns:
-            True if successful, False otherwise.
+            True if empty, False otherwise.
         """
         try:
             self.connect_db()
