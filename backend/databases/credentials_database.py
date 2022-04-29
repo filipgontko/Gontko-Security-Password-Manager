@@ -13,7 +13,8 @@ class CredentialsDB(Database):
     def create_table(self):
         """
         Create table for storing username, password and site.
-        :return: bool: True if successful, False otherwise.
+        Returns:
+            True if successful, False otherwise.
         """
         try:
             self.connect_db()
@@ -37,8 +38,11 @@ class CredentialsDB(Database):
     def insert_credentials(self, credentials):
         """
         Insert credentials into the database.
-        :param credentials: Credentials object for which to store username and password
-        :return: bool: True if successful, False otherwise.
+        Args:
+            credentials: credentials object for which to store username and password
+
+        Returns:
+            True if successful, False otherwise.
         """
         try:
             self.connect_db()
@@ -60,9 +64,12 @@ class CredentialsDB(Database):
     def edit_credentials(self, credential_id, credentials):
         """
         Edit the credential for a specific site. Change either credential is possible.
-        :param credentials: Credentials object for which to store username and password
-        :param credential_id: Credential ID for which to edit credentials.
-        :return: bool: True if successful, False otherwise.
+        Args:
+            credential_id: Credential ID for which to edit credentials.
+            credentials: Credentials object for which to store username and password
+
+        Returns:
+            True if successful, False otherwise.
         """
         try:
             self.connect_db()
@@ -84,8 +91,11 @@ class CredentialsDB(Database):
     def get_password(self, credential_id):
         """
         Get the password for a specific site.
-        :param credential_id: Credentials object for which to retrieve the password.
-        :return: Encrypted password.
+        Args:
+            credential_id: Credential ID for which to retrieve the password.
+
+        Returns:
+            Encrypted password.
         """
         try:
             self.connect_db()
@@ -105,8 +115,11 @@ class CredentialsDB(Database):
     def delete_credentials(self, credential_id):
         """
         Delete credentials from the database.
-        :param credential_id: Credential ID to be removed.
-        :return: bool: True if successful, False otherwise.
+        Args:
+            credential_id: Credential ID of a credential to be removed.
+
+        Returns:
+            True if successful, False otherwise.
         """
         try:
             self.connect_db()
