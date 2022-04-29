@@ -14,9 +14,9 @@ class CredentialsView(Screen):
     """
     def __init__(self, password_manager):
         """
-        Initialize CredentialsView
+        Initialize CredentialsView screen.
         Args:
-            password_manager: Password manager object
+            password_manager: Password manager object.
         """
         super(CredentialsView, self).__init__()
         self.dialog = None

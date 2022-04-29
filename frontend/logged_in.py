@@ -10,9 +10,9 @@ class LoggedIn(Screen):
     """
     def __init__(self, password_manager):
         """
-        Initialize LoggedIn view.
+        Initialize LoggedIn screen.
         Args:
-            password_manager: Password manager object
+            password_manager: Password manager object.
         """
         super(LoggedIn, self).__init__()
         self.password_manager = password_manager
