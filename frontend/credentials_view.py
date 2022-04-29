@@ -113,10 +113,10 @@ class CredentialsView(Screen):
         Args:
             reason: Delete or Save.
         """
+        self.dialog = None
         if not self.dialog:
             self.set_dialog_context(reason)
         self.dialog.open()
-        self.dialog = None
 
     def set_dialog_context(self, reason):
         """
