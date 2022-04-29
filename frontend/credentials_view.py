@@ -37,9 +37,8 @@ class CredentialsView(Screen):
 
     def on_leave(self):
         """
-        Clear the text fields, strength meter and check if pawned, when leaving the view.
-        Returns:
-
+        Clear the text fields, strength meter, check if pawned and set password field to show masked password
+        when leaving the view.
         """
         self.ids.generate_pwd.text = ""
         self.ids.strength_slider.value = 12
@@ -53,7 +52,7 @@ class CredentialsView(Screen):
         """
         Get the site.
         Returns:
-            Site string
+            Site string.
         """
         return self.password_manager.credential_site
 
@@ -61,7 +60,7 @@ class CredentialsView(Screen):
         """
         Get username.
         Returns:
-            Username string
+            Username string.
         """
         return self.password_manager.credential_username
 
@@ -112,7 +111,7 @@ class CredentialsView(Screen):
         """
         Show dialog on screen.
         Args:
-            reason: delete or save
+            reason: Delete or Save.
         """
         if not self.dialog:
             self.set_dialog_context(reason)
@@ -123,7 +122,7 @@ class CredentialsView(Screen):
         """
         Set up the dialog context to be shown.
         Args:
-            reason: delete or save
+            reason: Delete or Save.
         """
         if reason == "delete":
             self.dialog = MDDialog(
@@ -148,7 +147,7 @@ class CredentialsView(Screen):
         """
         Close the dialog and set it to None.
         Args:
-            obj: dialog object
+            obj: Dialog object.
         """
         self.dialog.dismiss()
         self.dialog = None
@@ -157,7 +156,7 @@ class CredentialsView(Screen):
         """
         Save credentials to the database.
         Args:
-            obj: dialog object
+            obj: Dialog object.
         """
         self.dialog.dismiss()
         self.dialog = None
@@ -170,7 +169,7 @@ class CredentialsView(Screen):
         """
         Delete credentials from the database.
         Args:
-            obj: dialog object
+            obj: Dialog object.
         """
         self.dialog.dismiss()
         self.dialog = None
