@@ -19,11 +19,24 @@ Builder.load_file("frontend/password_manager.kv")
 
 
 class PasswordManagerApp(MDApp):
+    """
+    Password manager Kivy app.
+    """
     def __init__(self, password_manager):
+        """
+        Initialize PasswordManagerApp MDApp.
+        Args:
+            password_manager: Password manager object.
+        """
         super().__init__()
         self.password_manager = password_manager
 
     def build(self):
+        """
+        Add screens to the ScreenManager and set up the theme style.
+        Returns:
+            Screen manager.
+        """
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Amber"
         self.theme_cls.accent_palette = "Orange"
