@@ -23,6 +23,15 @@ def check_email(email):
         return False
 
 
+def generate_password(length):
+    """
+    Generate password on button click.
+    Returns:
+        Randomly generate password.
+    """
+    return crypto.generate_password(length)
+
+
 class PasswordManager:
     """
     Class representing password manager.
@@ -205,11 +214,3 @@ class PasswordManager:
             return None
         logger.error("User not logged in.")
         return None
-
-    def generate_password(self, length):
-        """
-        Generate password on button click.
-        Returns:
-            Randomly generate password.
-        """
-        return crypto.generate_password(length)

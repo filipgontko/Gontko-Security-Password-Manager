@@ -3,6 +3,7 @@ from kivymd.uix.button import MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
 
 from backend.crypto import check_if_pwned, check_password_strength
+from backend.password_manager import generate_password
 
 
 class CredentialsView(Screen):
@@ -117,4 +118,4 @@ class CredentialsView(Screen):
         self.parent.transition.direction = "right"
 
     def generate_password(self, length=12):
-        return self.password_manager.generate_password(length)
+        return generate_password(length)

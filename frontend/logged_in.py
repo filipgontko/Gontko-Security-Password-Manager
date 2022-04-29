@@ -1,5 +1,7 @@
 from kivy.uix.screenmanager import Screen
 
+from backend.password_manager import generate_password
+
 
 class LoggedIn(Screen):
     def __init__(self, password_manager):
@@ -34,7 +36,7 @@ class LoggedIn(Screen):
         self.password_manager.add_new_credentials(site, username, password)
 
     def generate_password(self, length=12):
-        return self.password_manager.generate_password(length)
+        return generate_password(length)
 
     def set_list_credentials(self, text="", search=True):
         def add_credential_item(cred_id, website, username):
