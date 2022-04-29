@@ -2,7 +2,7 @@ import re
 
 from backend import crypto
 from backend.credentials import Credentials
-from backend.crypto import compare_master_password_hash, create_master_key
+from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message, decrypt_message
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
@@ -43,6 +43,7 @@ class PasswordManager:
         self.user_logged_in = False
         self.email = None
         self.master_db = MasterKeyDB()
+        self.master_password = None
         self.credentials_db = CredentialsDB()
         self.credential_site = None
         self.credential_username = None
@@ -58,6 +59,7 @@ class PasswordManager:
             return False
         try:
             self.email = email
+            self.master_password = password
             master_key_hash = create_master_key(password)
             self.master_db.insert_master_information(master_key_hash, self.email)
             self.user_logged_in = True
@@ -89,6 +91,7 @@ class PasswordManager:
                 stored_master_key_hash = self.master_db.get_master_key_hash(self.email)
                 master_key_hash = compare_master_password_hash(password)
                 if stored_master_key_hash == master_key_hash:
+                    self.master_password = password
                     self.user_logged_in = True
                     logger.info("User with e-mail '{}' successfully logged in.".format(email))
                     return True
@@ -114,7 +117,6 @@ class PasswordManager:
         """
         logger.info("Logging out...")
         self.user_logged_in = False
-        # TODO: Show login screen
 
     def add_new_credentials(self, site, username, password):
         """
@@ -128,7 +130,8 @@ class PasswordManager:
                 if site == "" or username == "" or password == "":
                     logger.info("Credentials contain empty string. Not adding to DB.")
                     return False
-                credentials = Credentials(site, username, password)
+                encrypted_password = encrypt_message(password, self.master_password)
+                credentials = Credentials(site, username, encrypted_password)
                 self.credentials_db.insert_credentials(credentials)
                 logger.info("Credentials added successfully.")
                 return True
@@ -153,7 +156,8 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 logger.info("Editing credentials within password_manager.")
-                credentials = Credentials(site, username, password)
+                encrypted_password = encrypt_message(password, self.master_password)
+                credentials = Credentials(site, username, encrypted_password)
                 self.credentials_db.edit_credentials(cred_id, credentials)
                 logger.info("Credentials edited successfully.")
                 return True
@@ -208,8 +212,9 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 logger.info("Getting password for specified credentials.")
-                creds_list = self.credentials_db.get_password(credential_id)
-                return creds_list
+                password = self.credentials_db.get_password(credential_id)
+                decrypted_password = decrypt_message(password, self.master_password)
+                return decrypted_password
         except Exception as e:
             return None
         logger.error("User not logged in.")

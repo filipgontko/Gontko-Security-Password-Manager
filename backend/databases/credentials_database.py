@@ -47,10 +47,9 @@ class CredentialsDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            encrypted_password = encrypt_message(credentials.password)
             insert_query = """INSERT INTO credentials_table(site, username, password) 
                            VALUES (?, ?, ?);"""
-            cursor.execute(insert_query, (credentials.site, credentials.username, encrypted_password))
+            cursor.execute(insert_query, (credentials.site, credentials.username, credentials.password))
             self.connection.commit()
             cursor.close()
             return True
@@ -74,11 +73,10 @@ class CredentialsDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            encrypted_password = encrypt_message(credentials.password)
             update_query = """UPDATE credentials_table 
                             SET site = ?, username = ?, password = ?
                             WHERE id = ?;"""
-            cursor.execute(update_query, (credentials.site, credentials.username, encrypted_password, credential_id))
+            cursor.execute(update_query, (credentials.site, credentials.username, credentials.password, credential_id))
             self.connection.commit()
             cursor.close()
             return True
@@ -104,8 +102,7 @@ class CredentialsDB(Database):
             cursor.execute(get_pass_query)
             self.connection.commit()
             record = cursor.fetchone()[0]
-            decrypted_password = decrypt_message(record)
-            return decrypted_password
+            return record
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))
             return None

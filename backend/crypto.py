@@ -48,20 +48,20 @@ def load_crypto_key_base_from_file():
         return None
 
 
-def encrypt_message(message):
+def encrypt_message(message, password):
     """
     Encrypts (AES256) given credentials with a master key consisting of a master password and a key file.
     Args:
         message: Message to encrypt.
+        password: Master password.
 
     Returns:
         Encrypted message.
     """
     salt = secrets.token_bytes(BLOCK_SIZE)
-    random_string = "KsZQRTFKAfoA2GhWle2K"
     if not key_exists():
         generate_crypto_key_base()
-    key_base = load_crypto_key_base_from_file() + random_string
+    key_base = load_crypto_key_base_from_file() + password
     kdf = PBKDF2(key_base, salt, 64, 1000)
     master_key = kdf[:32]
     cipher_config = AES.new(master_key, AES.MODE_GCM)
@@ -75,11 +75,12 @@ def encrypt_message(message):
         return None
 
 
-def decrypt_message(encrypted_message):
+def decrypt_message(encrypted_message, password):
     """
     Decrypts given credentials with the given master key.
     Args:
         encrypted_message: File containing encryption parameters and the cipher text.
+        password: Master password.
 
     Returns:
         Decrypted message.
@@ -91,8 +92,7 @@ def decrypt_message(encrypted_message):
     except IOError as e:
         return None
 
-    random_string = "KsZQRTFKAfoA2GhWle2K"
-    key_base = load_crypto_key_base_from_file() + random_string
+    key_base = load_crypto_key_base_from_file() + password
     kdf = PBKDF2(key_base, salt, 64, 1000)
     master_key = kdf[:32]
     cipher_config = AES.new(master_key, AES.MODE_GCM, nonce=nonce)
