@@ -1,5 +1,7 @@
 from kivy.uix.screenmanager import Screen
 
+from backend.my_logger import logger
+
 
 class Signup(Screen):
     """
@@ -21,4 +23,7 @@ class Signup(Screen):
             email: E-mail address of the user.
             password: Master password.
         """
-        self.password_manager.sign_up(email, password)
+        try:
+            self.password_manager.sign_up(email, password)
+        except Exception as e:
+            logger.error("Exception occurred during signup. {}".format(e))
