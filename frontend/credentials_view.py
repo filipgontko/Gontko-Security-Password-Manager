@@ -59,17 +59,25 @@ class CredentialsView(Screen):
         """
         Get the site.
         Returns:
-            Site string.
+            Site string if successful, empty string otherwise.
         """
-        return self.password_manager.credential_site
+        try:
+            return self.password_manager.credential_site
+        except Exception as e:
+            logger.error("Get site failed. {}".format(e))
+            return ""
 
     def get_username(self):
         """
         Get username.
         Returns:
-            Username string.
+            Username string if successful, empty string otherwise.
         """
-        return self.password_manager.credential_username
+        try:
+            return self.password_manager.credential_username
+        except Exception as e:
+            logger.error("Get username failed. {}".format(e))
+            return ""
 
     def get_password(self):
         """
