@@ -106,8 +106,7 @@ class CredentialsView(Screen):
         self.ids.passwd.text = self.get_password()
         self.show_password_strength()
         if check_if_pwned(self.ids.passwd.text):
-            self.dialog = MDDialog(
-                text="OOOPS! Your password has been pwned! Change it now")
+            self.dialog = MDDialog(text="OOOPS! Your password has been pwned! Change it now")
             self.dialog.open()
             self.dialog = ""
 
