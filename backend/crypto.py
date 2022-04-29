@@ -3,6 +3,7 @@ import secrets
 import random
 import string
 import os
+import pwnedpasswords
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
@@ -170,3 +171,18 @@ def check_password_strength(password):
         strength_word = "Very Strong"
 
     return strength_word
+
+
+def check_if_pwned(password):
+    """
+    Check if password appears in a database of pawned credentials using k-anonymity.
+    This allows us to only provide the first 5 characters of the SHA-1 hash of the password in question.
+    The API then responds with a list of SHA-1 hash suffixes with that prefix.
+    No plaintext passwords ever leave your machine using pwnedpasswords.
+    Args:
+        password: Password to check
+
+    Returns:
+        True if found, False otherwise.
+    """
+    return pwnedpasswords.check(password, plain_text=True)

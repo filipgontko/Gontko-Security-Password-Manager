@@ -6,7 +6,7 @@ from kivymd.uix.button import MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import TwoLineListItem
 
-from backend.crypto import check_password_strength
+from backend.crypto import check_password_strength, check_if_pwned
 
 
 class Signup(Screen):
@@ -113,6 +113,7 @@ class CredentialsView(Screen):
         self.ids.strength_word.text = ""
         self.ids.passwd.password = True
         self.ids.eye_icon.icon = "eye-off"
+        self.ids.pwned.text = ""
 
     def get_site(self):
         return self.password_manager.credential_site
@@ -128,6 +129,12 @@ class CredentialsView(Screen):
 
     def show_password_strength(self):
         strength_word = check_password_strength(self.ids.passwd.text)
+
+        if check_if_pwned(self.ids.passwd.text):
+            self.ids.pwned.text = "OOOPS! Your password has been pwned! Change it."
+            strength_word = "Weak"
+        else:
+            self.ids.pwned.text = "Your password has not been pwned!"
 
         if strength_word == "Weak":
             self.ids.strength_meter.value = 25
