@@ -1,5 +1,7 @@
 from kivy.uix.screenmanager import Screen
 
+from backend.my_logger import logger
+
 
 class Login(Screen):
     """
@@ -22,8 +24,11 @@ class Login(Screen):
             password: Master password.
 
         """
-        if self.password_manager.login(email, password):
-            self.parent.current = "logged_in"
+        try:
+            if self.password_manager.login(email, password):
+                self.parent.current = "logged_in"
+        except Exception as e:
+            logger.error("Exception occurred during login(). {}".format(e))
 
     def forgot_password(self):
         """
