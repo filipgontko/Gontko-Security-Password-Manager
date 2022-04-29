@@ -102,6 +102,7 @@ class CredentialsView(Screen):
         self.ids.website.text = self.get_site()
         self.ids.username.text = self.get_username()
         self.ids.passwd.text = self.get_password()
+        self.show_password_strength()
 
     def on_leave(self):
         self.ids.generate_pwd.text = ""
