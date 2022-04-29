@@ -15,7 +15,8 @@ class Database(ABC):
     def connect_db(self):
         """
         Connect to the DB
-        :return: None
+        Returns:
+            None
         """
         try:
             self.connection = sqlite3.connect('pwdmngrdb.db')
@@ -27,7 +28,8 @@ class Database(ABC):
     def disconnect_db(self):
         """
         Disconnect from the DB if connection exists
-        :return: None
+        Returns:
+             None
         """
         if self.connection:
             self.connection = self.connection.close()
@@ -35,7 +37,8 @@ class Database(ABC):
     def clear_table(self):
         """
         Clear all credential information.
-        :return: bool: True if successful, False otherwise.
+        Returns:
+             True if successful, False otherwise.
         """
         try:
             sqlite_conn = self.connect_db()
@@ -54,7 +57,8 @@ class Database(ABC):
     def drop_table(self):
         """
         Drop the whole credential table.
-        :return: bool: True if successful, False otherwise.
+        Returns:
+             True if successful, False otherwise.
         """
         try:
             sqlite_conn = self.connect_db()
