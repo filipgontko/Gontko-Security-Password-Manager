@@ -3,7 +3,7 @@ from kivy.uix.screenmanager import Screen
 
 class Login(Screen):
     """
-    Login screen where user can login to the password manager.
+    Login screen where user can log in to the password manager.
     """
     def __init__(self, password_manager):
         """
@@ -19,7 +19,7 @@ class Login(Screen):
         Login to the password manager.
         Args:
             email: E-mail address of the user.
-            password: Password.
+            password: Master password.
 
         """
         if self.password_manager.login(email, password):
