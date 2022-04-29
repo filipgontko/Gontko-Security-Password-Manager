@@ -105,6 +105,11 @@ class CredentialsView(Screen):
         self.ids.username.text = self.get_username()
         self.ids.passwd.text = self.get_password()
         self.show_password_strength()
+        if check_if_pwned(self.ids.passwd.text):
+            self.dialog = MDDialog(
+                text="OOOPS! Your password has been pwned! Change it now")
+            self.dialog.open()
+            self.dialog = ""
 
     def on_leave(self):
         self.ids.generate_pwd.text = ""
@@ -131,7 +136,7 @@ class CredentialsView(Screen):
         strength_word = check_password_strength(self.ids.passwd.text)
 
         if check_if_pwned(self.ids.passwd.text):
-            self.ids.pwned.text = "OOOPS! Your password has been pwned! Change it."
+            self.ids.pwned.text = "Your password has been pwned!"
             strength_word = "Weak"
         else:
             self.ids.pwned.text = "Your password has not been pwned!"
@@ -160,6 +165,7 @@ class CredentialsView(Screen):
         if not self.dialog:
             self.set_dialog_context(reason)
         self.dialog.open()
+        self.dialog = ""
 
     def set_dialog_context(self, reason):
         if reason == "delete":
