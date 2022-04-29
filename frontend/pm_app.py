@@ -6,6 +6,8 @@ from kivymd.uix.button import MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import TwoLineListItem
 
+from backend.crypto import check_password_strength
+
 
 class Signup(Screen):
     def __init__(self, password_manager):
@@ -108,6 +110,7 @@ class CredentialsView(Screen):
         self.ids.generate_pwd.text = ""
         self.ids.strength_slider.value = 12
         self.ids.strength_meter.value = 0
+        self.ids.strength_word.text = ""
         self.ids.passwd.password = True
         self.ids.eye_icon.icon = "eye-off"
 
@@ -124,25 +127,27 @@ class CredentialsView(Screen):
             return ""
 
     def show_password_strength(self):
-        if len(self.ids.passwd.text) < 12:
+        strength_word = check_password_strength(self.ids.passwd.text)
+
+        if strength_word == "Weak":
             self.ids.strength_meter.value = 25
             self.ids.strength_meter.color = [1, 0, 0, 1]
-            self.ids.strength_word.text = "Weak"
+            self.ids.strength_word.text = strength_word
 
-        if 12 <= len(self.ids.passwd.text) < 20:
+        if strength_word == "Moderate":
             self.ids.strength_meter.value = 50
             self.ids.strength_meter.color = [1, 0.9, 0, 1]
-            self.ids.strength_word.text = "Moderate"
+            self.ids.strength_word.text = strength_word
 
-        if 20 <= len(self.ids.passwd.text) < 28:
+        if strength_word == "Strong":
             self.ids.strength_meter.value = 70
             self.ids.strength_meter.color = [0.5, 0.9, 0, 1]
-            self.ids.strength_word.text = "Strong"
+            self.ids.strength_word.text = strength_word
 
-        if 28 <= len(self.ids.passwd.text) <= 32:
+        if strength_word == "Very Strong":
             self.ids.strength_meter.value = 100
             self.ids.strength_meter.color = [0, 1, 0, 1]
-            self.ids.strength_word.text = "Very Strong"
+            self.ids.strength_word.text = strength_word
 
     def show_dialog(self, reason):
         if not self.dialog:

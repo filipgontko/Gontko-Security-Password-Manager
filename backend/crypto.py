@@ -141,3 +141,32 @@ def generate_password(length=12):
     generated_password = "".join(pwd_suggestion)
     # TODO: Check if pwd has been pawned.
     return generated_password
+
+
+def check_password_strength(password):
+    """
+    Check password strength.
+    A password is considered strong if:
+        12 characters length or more
+        Does not repeat characters ('aaaaaaaaaaaa')
+    Args:
+        password: Password to check.
+
+    Returns:
+        weak, moderate, strong or very strong.
+    """
+    strength_word = ""
+
+    if len(password) < 8:
+        strength_word = "Weak"
+
+    if 8 <= len(password) < 12:
+        strength_word = "Moderate"
+
+    if 12 <= len(password) < 20:
+        strength_word = "Strong"
+
+    if 20 <= len(password) <= 64:
+        strength_word = "Very Strong"
+
+    return strength_word
