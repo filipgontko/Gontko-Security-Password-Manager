@@ -238,4 +238,8 @@ class CredentialsView(Screen):
         Returns:
             Password string.
         """
-        return generate_password(length)
+        try:
+            return generate_password(length)
+        except Exception as e:
+            logger.error("Exception occurred during password generation. {}".format(e))
+            return ""
