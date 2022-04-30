@@ -11,7 +11,7 @@ from Crypto.Protocol.KDF import PBKDF2
 BLOCK_SIZE = 16
 
 
-def generate_crypto_key_base():
+def generate_crypto_key_base(master=False):
     """
     Generate and write into a file a crypto key base that will be used to encrypt and decrypt messages.
     Returns:
@@ -19,30 +19,39 @@ def generate_crypto_key_base():
     """
     if not (key_exists()):
         key = generate_password(25)
+        file_name = "secret.key"
+        if master:
+            file_name = "master_secret.key"
         try:
-            with open("secret.key", "w") as crypto_key_file:
+            with open(file_name, "w") as crypto_key_file:
                 crypto_key_file.write(key)
         except IOError as e:
             return None
 
 
-def key_exists():
+def key_exists(master=False):
     """
     Validate if a key exists
     Returns:
          True if the key exists, False otherwise
     """
-    return os.path.isfile('secret.key')
+    file_name = "secret.key"
+    if master:
+        file_name = "master_secret.key"
+    return os.path.isfile(file_name)
 
 
-def load_crypto_key_base_from_file():
+def load_crypto_key_base_from_file(master=False):
     """
     Load the secret key from a file.
     Returns:
          Crypto key base.
     """
     try:
-        with open("secret.key", "r") as reader:
+        file_name = "secret.key"
+        if master:
+            file_name = "master_secret.key"
+        with open(file_name, "r") as reader:
             return reader.readline()
     except IOError as e:
         return None
@@ -63,8 +72,8 @@ def encrypt_message(message, password):
         generate_crypto_key_base()
     key_base = load_crypto_key_base_from_file() + password
     kdf = PBKDF2(key_base, salt, 64, 1000)
-    master_key = kdf[:32]
-    cipher_config = AES.new(master_key, AES.MODE_GCM)
+    key = kdf[:32]
+    cipher_config = AES.new(key, AES.MODE_GCM)
 
     cipher_text, tag = cipher_config.encrypt_and_digest(bytes(message, 'utf-8'))
 
@@ -94,8 +103,8 @@ def decrypt_message(encrypted_message, password):
 
     key_base = load_crypto_key_base_from_file() + password
     kdf = PBKDF2(key_base, salt, 64, 1000)
-    master_key = kdf[:32]
-    cipher_config = AES.new(master_key, AES.MODE_GCM, nonce=nonce)
+    key = kdf[:32]
+    cipher_config = AES.new(key, AES.MODE_GCM, nonce=nonce)
 
     decrypted = cipher_config.decrypt_and_verify(cipher_text[0], tag).decode('utf-8')
     return decrypted
@@ -108,7 +117,11 @@ def create_master_key(master_password):
          Hash of the given master key.
     """
     salt = secrets.token_bytes(32)
-    derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
+    if not key_exists():
+        generate_crypto_key_base(master=True)
+    key_base = load_crypto_key_base_from_file(master=True)
+    master_key = master_password + key_base
+    derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
 
     try:
@@ -132,7 +145,9 @@ def compare_master_password_hash(master_password):
     except IOError as e:
         return None
 
-    derived_key = hashlib.pbkdf2_hmac('sha256', master_password.encode(), salt, 100000)
+    key_base = load_crypto_key_base_from_file(master=True)
+    master_key = master_password + key_base
+    derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
     return digest
 
