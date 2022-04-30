@@ -2,7 +2,6 @@ import sqlite3
 
 from backend.databases.database import Database
 from backend.my_logger import logger
-from backend.crypto import encrypt_message, decrypt_message
 
 
 class CredentialsDB(Database):
