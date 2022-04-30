@@ -12,7 +12,7 @@ Password manager as a personal project to get better in coding and understanding
 * GUI
 
 # Installation
-1. Clone the repository to your computer via `git clone https://github.com/filipgontko/Password-Manager.git`
+1. Clone the repository to your computer via `git clone https://github.com/filipgontko/Gontko-Security-Password-Manager.git`
 2. Run `pip install -r requirements.txt`
 
 # Run 
