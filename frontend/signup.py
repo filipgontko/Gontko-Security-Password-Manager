@@ -24,6 +24,8 @@ class Signup(Screen):
             password: Master password.
         """
         try:
-            self.password_manager.sign_up(email, password)
+            if self.password_manager.sign_up(email, password):
+                self.parent.current = "logged_in"
+                self.parent.transition.direction = "left"
         except Exception as e:
             logger.error("Exception occurred during signup. {}".format(e))
