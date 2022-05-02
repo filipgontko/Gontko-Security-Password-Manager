@@ -5,7 +5,7 @@ import string
 import os
 import pwnedpasswords
 import pyotp
-import qrcode.image.svg
+import qrcode
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
@@ -237,15 +237,37 @@ def generate_otp_url(email):
 def generate_otp_qr_for_auth(otp_url):
     """
     Generate a QR code for Google Authenticator app.
+    Image is saved in png format in images directory.
     Args:
         otp_url: Url of the OTP
     """
     try:
-        img = qrcode.make(otp_url, image_factory=qrcode.image.svg.SvgImage)
-        with open('user_qr.svg', 'wb') as qr:
+        make_images_dir()
+
+        qr = qrcode.QRCode(
+            version=1,
+            box_size=10,
+            border=5)
+
+        qr.add_data(otp_url)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill='black', back_color='white')
+        with open('images/qr.png', 'wb') as qr:
             img.save(qr)
     except Exception as e:
         logger.error("Exception occurred during generation OTP QR code. - {}".format(e))
+
+
+def make_images_dir():
+    """
+    Create images directory if it doesn't exist.
+    """
+    if not os.path.exists("images"):
+        try:
+            os.makedirs("images")
+        except OSError as e:
+            raise e
 
 
 def compare_totp(google_otp):
