@@ -7,6 +7,7 @@ from backend.my_logger import logger
 from frontend.credentials_view import CredentialsView
 from frontend.logged_in import LoggedIn
 from frontend.login import Login
+from frontend.mfa import MFA
 from frontend.signup import Signup
 
 
@@ -44,6 +45,7 @@ class PasswordManagerApp(MDApp):
             sm = ScreenManager()
             if self.password_manager.master_db.is_empty():
                 sm.add_widget(Signup(self.password_manager))
+                sm.add_widget(MFA(self.password_manager))
             sm.add_widget(Login(self.password_manager))
             sm.add_widget(LoggedIn(self.password_manager))
             sm.add_widget(CredentialsView(self.password_manager))

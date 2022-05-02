@@ -1,5 +1,6 @@
 from kivy.uix.screenmanager import Screen
 
+from backend.crypto import generate_otp_url, generate_otp_qr_for_auth
 from backend.my_logger import logger
 
 
@@ -25,7 +26,18 @@ class Signup(Screen):
         """
         try:
             if self.password_manager.sign_up(email, password):
-                self.parent.current = "logged_in"
-                self.parent.transition.direction = "left"
+                self.setup_mfa()
         except Exception as e:
             logger.error("Exception occurred during signup. {}".format(e))
+
+    def setup_mfa(self):
+        """
+        Generate OTP for user as MFA.
+        """
+        try:
+            url = generate_otp_url(self.password_manager.email)
+            generate_otp_qr_for_auth(url)
+            self.parent.current = "mfa"
+            self.parent.transition.direction = "left"
+        except Exception as e:
+            logger.error("Exception occurred during generating OTP. {}".format(e))

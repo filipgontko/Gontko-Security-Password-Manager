@@ -137,3 +137,4 @@ tests.logs/
 *secret.key
 *master_key_salt.bin
 *.db
+*.svg

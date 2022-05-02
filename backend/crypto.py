@@ -4,11 +4,15 @@ import random
 import string
 import os
 import pwnedpasswords
+import pyotp
+import qrcode.image.svg
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
+from backend.my_logger import logger
 
 BLOCK_SIZE = 16
+OTP_BASE = "JBSWY3DPEHPK3PXP"
 
 
 def generate_crypto_key_base(master=False):
@@ -216,3 +220,42 @@ def check_if_pwned(password):
         True if found, False otherwise.
     """
     return pwnedpasswords.check(password, plain_text=True)
+
+
+def generate_otp_url(email):
+    """
+    Generate OTP URL that can be used with Google Authenticator.
+    Args:
+        email: E-mail of the user
+
+    Returns:
+        URL that can be converted to QR and used in Google Authenticator app.
+    """
+    return pyotp.totp.TOTP(OTP_BASE).provisioning_uri(name=email, issuer_name='Gontko Security Password Manager')
+
+
+def generate_otp_qr_for_auth(otp_url):
+    """
+    Generate a QR code for Google Authenticator app.
+    Args:
+        otp_url: Url of the OTP
+    """
+    try:
+        img = qrcode.make(otp_url, image_factory=qrcode.image.svg.SvgImage)
+        with open('user_qr.svg', 'wb') as qr:
+            img.save(qr)
+    except Exception as e:
+        logger.error("Exception occurred during generation OTP QR code. - {}".format(e))
+
+
+def compare_totp(google_otp):
+    """
+    Compares the user entered OTP from Google Authenticator against the locally calculated OTP.
+    Args:
+        google_otp: Google Authenticator code
+
+    Returns:
+        True if matches, False otherwise.
+    """
+    totp = pyotp.TOTP(OTP_BASE)
+    return totp.now() == google_otp
