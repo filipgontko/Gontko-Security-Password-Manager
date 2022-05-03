@@ -13,6 +13,7 @@ class CredentialsView(Screen):
     On this screen it is possible to delete and edit credentials, and generate passwords.
     Additionally, it shows the password strength and notifies the user if the password has been pwned.
     """
+
     def __init__(self, password_manager):
         """
         Initialize CredentialsView screen.
@@ -54,12 +55,18 @@ class CredentialsView(Screen):
 
     def get_site(self):
         """
-        Get the site.
+        Get the site. If the site doesn't contain 'https://' or 'http://' prefix, it will be added.
         Returns:
             Site string if successful, empty string otherwise.
         """
         try:
-            return self.password_manager.credential_site
+            site = self.password_manager.credential_site
+            prefix = "https://"
+            not_secure_prefix = "http://"
+            if (prefix in site) or (not_secure_prefix in site):
+                return site
+            else:
+                return prefix + site
         except Exception as e:
             logger.error("Get site failed. {}".format(e))
             return ""
