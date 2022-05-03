@@ -1,5 +1,7 @@
 from kivy.uix.screenmanager import Screen
+from kivymd.uix.dialog import MDDialog
 
+from backend.crypto import check_if_pwned
 from backend.my_logger import logger
 from backend.password_manager import generate_password
 
@@ -17,6 +19,7 @@ class LoggedIn(Screen):
         """
         super(LoggedIn, self).__init__()
         self.password_manager = password_manager
+        self.dialog = None
 
     def on_enter(self):
         """
@@ -78,7 +81,12 @@ class LoggedIn(Screen):
             password: Password.
         """
         try:
+            self.is_pwned_message()
             self.password_manager.add_new_credentials(site, username, password)
+            self.ids.website.text = ""
+            self.ids.username.text = ""
+            self.ids.passwd.text = ""
+            self.ids.generate_pwd.text = ""
             self.refresh_search()
         except Exception as e:
             logger.error("Exception occurred while add_credentials(). {}".format(e))
@@ -146,3 +154,15 @@ class LoggedIn(Screen):
             )
         except Exception as e:
             logger.error("Exception occurred during add_credential_item(). {}".format(e))
+
+    def is_pwned_message(self):
+        """
+        Shows a dialog with a message that the password had been pwned!
+        """
+        try:
+            if check_if_pwned(self.ids.passwd.text):
+                self.dialog = MDDialog(text="OOOPS! Your password has been pwned! Change it now")
+                self.dialog.open()
+                self.dialog = None
+        except Exception as e:
+            logger.error("Exception occurred during showing pwned dialog. {}".format(e))
