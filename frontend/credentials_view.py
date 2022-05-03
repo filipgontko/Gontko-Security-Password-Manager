@@ -32,10 +32,7 @@ class CredentialsView(Screen):
             self.ids.username.text = self.get_username()
             self.ids.passwd.text = self.get_password()
             self.show_password_strength()
-            if check_if_pwned(self.ids.passwd.text):
-                self.dialog = MDDialog(text="OOOPS! Your password has been pwned! Change it now")
-                self.dialog.open()
-                self.dialog = None
+            self.is_pwned_message()
         except Exception as e:
             logger.error("Exception occurred during on_enter(). {}".format(e))
 
@@ -89,6 +86,18 @@ class CredentialsView(Screen):
             return self.password_manager.get_password_from_db(self.password_manager.credential_id)
         except Exception:
             return ""
+
+    def is_pwned_message(self):
+        """
+        Shows a dialog with a message that the password had been pwned!
+        """
+        try:
+            if check_if_pwned(self.ids.passwd.text):
+                self.dialog = MDDialog(text="OOOPS! Your password has been pwned! Change it now")
+                self.dialog.open()
+                self.dialog = None
+        except Exception as e:
+            logger.error("Exception occurred during showing pwned dialog. {}".format(e))
 
     def show_password_strength(self):
         """
