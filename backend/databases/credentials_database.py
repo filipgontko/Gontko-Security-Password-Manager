@@ -20,6 +20,7 @@ class CredentialsDB(Database):
             cursor = self.connection.cursor()
             create_table_query = """CREATE TABLE IF NOT EXISTS credentials_table (
                             id INTEGER PRIMARY KEY,
+                            name TEXT,
                             site TEXT,
                             username TEXT,
                             password TEXT
@@ -46,9 +47,10 @@ class CredentialsDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            insert_query = """INSERT INTO credentials_table(site, username, password) 
-                           VALUES (?, ?, ?);"""
-            cursor.execute(insert_query, (credentials.site, credentials.username, credentials.password))
+            insert_query = """INSERT INTO credentials_table(name, site, username, password) 
+                           VALUES (?, ?, ?, ?);"""
+            cursor.execute(insert_query, (credentials.name, credentials.site, credentials.username,
+                                          credentials.password))
             self.connection.commit()
             cursor.close()
             return True
@@ -73,9 +75,10 @@ class CredentialsDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             update_query = """UPDATE credentials_table 
-                            SET site = ?, username = ?, password = ?
+                            SET name = ?, site = ?, username = ?, password = ?
                             WHERE id = ?;"""
-            cursor.execute(update_query, (credentials.site, credentials.username, credentials.password, credential_id))
+            cursor.execute(update_query, (credentials.name, credentials.site, credentials.username,
+                                          credentials.password, credential_id))
             self.connection.commit()
             cursor.close()
             return True
@@ -135,12 +138,12 @@ class CredentialsDB(Database):
         """
         View stored sites and usernames in the database
         Returns:
-            List of credentials tuples (site, username)
+            List of credentials tuples (id, name, username)
         """
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            view_query = "SELECT id, site, username FROM credentials_table"
+            view_query = "SELECT id, name, site, username FROM credentials_table"
             cursor.execute(view_query)
             self.connection.commit()
             record = cursor.fetchall()

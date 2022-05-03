@@ -45,6 +45,7 @@ class PasswordManager:
         self.master_db = MasterKeyDB()
         self.master_password = None
         self.credentials_db = CredentialsDB()
+        self.credential_name = None
         self.credential_site = None
         self.credential_username = None
         self.credential_id = None
@@ -118,20 +119,25 @@ class PasswordManager:
         logger.info("Logging out...")
         self.user_logged_in = False
 
-    def add_new_credentials(self, site, username, password):
+    def add_new_credentials(self, name, site, username, password):
         """
         Adds new credentials to the password manager.
+        Args:
+            name: Credential name.
+            site: Website
+            username: Username
+            password: Password
         Returns:
             True if successful, False otherwise.
         """
         try:
             if self.check_user_logged_in():
                 logger.info("Adding new credentials into password_manager.")
-                if site == "" or username == "" or password == "":
+                if name == "" or username == "" or password == "":
                     logger.info("Credentials contain empty string. Not adding to DB.")
                     return False
                 encrypted_password = encrypt_message(password, self.master_password)
-                credentials = Credentials(site, username, encrypted_password)
+                credentials = Credentials(name, site, username, encrypted_password)
                 self.credentials_db.insert_credentials(credentials)
                 logger.info("Credentials added successfully.")
                 return True
@@ -141,11 +147,12 @@ class PasswordManager:
         logger.error("User not logged in.")
         return False
 
-    def edit_credentials(self, cred_id, site, username, password):
+    def edit_credentials(self, cred_id, name, site, username, password):
         """
         Edit credentials in password manager.
         Args:
             cred_id: Credential ID
+            name: Credential name.
             site: Website
             username: Username
             password: Password
@@ -157,7 +164,7 @@ class PasswordManager:
             if self.check_user_logged_in():
                 logger.info("Editing credentials within password_manager.")
                 encrypted_password = encrypt_message(password, self.master_password)
-                credentials = Credentials(site, username, encrypted_password)
+                credentials = Credentials(name, site, username, encrypted_password)
                 self.credentials_db.edit_credentials(cred_id, credentials)
                 logger.info("Credentials edited successfully.")
                 return True

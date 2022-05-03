@@ -9,6 +9,7 @@ from frontend.logged_in import LoggedIn
 from frontend.login import Login
 from frontend.mfa import MFA
 from frontend.signup import Signup
+from kivy.core.window import Window
 
 
 class CustomTwoLineCredsListItem(TwoLineListItem):
@@ -39,6 +40,7 @@ class PasswordManagerApp(MDApp):
             Screen manager if successful, None otherwise.
         """
         try:
+            Window.size = (800, 630)
             self.theme_cls.theme_style = "Dark"
             self.theme_cls.primary_palette = "Amber"
             self.theme_cls.accent_palette = "Orange"

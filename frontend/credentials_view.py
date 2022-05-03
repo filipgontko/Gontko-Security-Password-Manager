@@ -29,6 +29,7 @@ class CredentialsView(Screen):
         Initialize text fields, strength meter and check if pawned, when entering the view.
         """
         try:
+            self.ids.cred_name.text = self.get_cred_name()
             self.ids.website.text = self.get_site()
             self.ids.username.text = self.get_username()
             self.ids.passwd.text = self.get_password()
@@ -52,6 +53,18 @@ class CredentialsView(Screen):
             self.ids.pwned.text = ""
         except Exception as e:
             logger.error("Exception occurred during on_leave(). {}".format(e))
+
+    def get_cred_name(self):
+        """
+        Get credential name.
+        Returns:
+            Username string if successful, empty string otherwise.
+        """
+        try:
+            return self.password_manager.credential_name
+        except Exception as e:
+            logger.error("Get username failed. {}".format(e))
+            return ""
 
     def get_site(self):
         """
@@ -224,6 +237,7 @@ class CredentialsView(Screen):
             self.dialog.dismiss()
             self.dialog = None
             self.password_manager.edit_credentials(self.password_manager.credential_id,
+                                                   self.ids.cred_name.text,
                                                    self.ids.website.text,
                                                    self.ids.username.text,
                                                    self.ids.passwd.text)

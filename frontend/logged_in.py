@@ -55,34 +55,38 @@ class LoggedIn(Screen):
         except Exception as e:
             logger.error("Exception occurred during logout(). {}".format(e))
 
-    def view_credentials(self, credential_id, website, username):
+    def view_credentials(self, credential_id, name, website, username):
         """
         View credentials user clicked on. This will take the user to the CredentialsView.
         Args:
             credential_id: ID of the credential.
+            name: Name of the credential.
             website: Website.
             username: Username.
         """
         try:
             self.parent.current = "creds_view"
             self.parent.transition.direction = "left"
+            self.password_manager.credential_name = name
             self.password_manager.credential_id = credential_id
             self.password_manager.credential_site = website
             self.password_manager.credential_username = username
         except Exception as e:
             logger.error("Exception occurred during view_credentials(). {}".format(e))
 
-    def add_credentials(self, site, username, password):
+    def add_credentials(self, name, site, username, password):
         """
         Add credentials to the database.
         Args:
+            name: Credential name.
             site: Website.
             username: Username.
             password: Password.
         """
         try:
             self.is_pwned_message()
-            self.password_manager.add_new_credentials(site, username, password)
+            self.password_manager.add_new_credentials(name, site, username, password)
+            self.ids.cred_name = ""
             self.ids.website.text = ""
             self.ids.username.text = ""
             self.ids.passwd.text = ""
@@ -128,16 +132,17 @@ class LoggedIn(Screen):
             for creds in self.password_manager.get_all_credentials():
                 if search:
                     if text in creds[1]:
-                        self.add_credential_item(creds[0], creds[1], creds[2])
+                        self.add_credential_item(creds[0], creds[1], creds[2], creds[3])
                 else:
-                    self.add_credential_item(creds[0], creds[1], creds[2])
+                    self.add_credential_item(creds[0], creds[1], creds[2], creds[3])
         except Exception as e:
             return None
 
-    def add_credential_item(self, cred_id, website, username):
+    def add_credential_item(self, cred_id, name, website, username):
         """
         Adding credentials to the search list.
         Args:
+            name: Name of the credential.
             cred_id: ID of credentials.
             website: Website.
             username: Username.
@@ -146,9 +151,9 @@ class LoggedIn(Screen):
             self.ids.rv.data.append(
                 {
                     "viewclass": "CustomTwoLineCredsListItem",
-                    "text": website,
+                    "text": name,
                     "secondary_text": "username: {}".format(username),
-                    "on_release": lambda: self.view_credentials(cred_id, website, username),
+                    "on_release": lambda: self.view_credentials(cred_id, name, website, username),
                     "callback": lambda x: x
                 }
             )

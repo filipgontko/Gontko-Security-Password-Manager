@@ -3,21 +3,19 @@ from backend.my_logger import logger
 
 class Credentials:
     """
-    Class representing credentials (site, username, password).
+    Class representing credentials (name, site, username, password).
 
     Attributes:
+        name: Site or App name.
         site: Site
         username: Username
         password: Password
 
     Methods:
         get_credentials: Retrieves credentials in a list.
-        update_site: Update site.
-        update_username: Update username.
-        update_password: Update password.
     """
 
-    def __init__(self, site=None, username=None, password=None):
+    def __init__(self, name=None, site=None, username=None, password=None):
         """
         Initializes credentials
         Args:
@@ -25,6 +23,7 @@ class Credentials:
             username: username
             password: password
         """
+        self.name = name
         self.site = site
         self.username = username
         self.password = password
@@ -36,7 +35,7 @@ class Credentials:
             List of credentials.
         """
         logger.info("Getting credentials.")
-        return list((self.site, self.username, self.password))
+        return list((self.name, self.site, self.username, self.password))
 
     def __del__(self):
         """
