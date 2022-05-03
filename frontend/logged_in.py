@@ -87,8 +87,11 @@ class LoggedIn(Screen):
         """
         Refresh the list of credentials in DB.
         """
-        self.ids.search_field.text = "\r"
-        self.ids.search_field.text = ""
+        try:
+            self.ids.search_field.text = "\r"
+            self.ids.search_field.text = ""
+        except Exception as e:
+            logger.error("Exception occurred while refresh_search(). {}".format(e))
 
     def generate_password(self, length=12):
         """
