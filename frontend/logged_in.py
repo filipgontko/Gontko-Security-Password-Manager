@@ -23,8 +23,7 @@ class LoggedIn(Screen):
         Initialize text fields when entering the view.
         """
         try:
-            self.ids.search_field.text = "\r"
-            self.ids.search_field.text = ""
+            self.refresh_search()
         except Exception as e:
             logger.error("Exception occurred during on_enter(). {}".format(e))
 
@@ -80,8 +79,16 @@ class LoggedIn(Screen):
         """
         try:
             self.password_manager.add_new_credentials(site, username, password)
+            self.refresh_search()
         except Exception as e:
             logger.error("Exception occurred while add_credentials(). {}".format(e))
+
+    def refresh_search(self):
+        """
+        Refresh the list of credentials in DB.
+        """
+        self.ids.search_field.text = "\r"
+        self.ids.search_field.text = ""
 
     def generate_password(self, length=12):
         """
