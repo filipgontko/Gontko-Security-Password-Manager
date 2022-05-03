@@ -36,6 +36,7 @@ class LoggedIn(Screen):
         """
         try:
             self.ids.search_field.text = ""
+            self.ids.cred_name.text = ""
             self.ids.website.text = ""
             self.ids.username.text = ""
             self.ids.passwd.text = ""
@@ -86,7 +87,7 @@ class LoggedIn(Screen):
         try:
             self.is_pwned_message()
             self.password_manager.add_new_credentials(name, site, username, password)
-            self.ids.cred_name = ""
+            self.ids.cred_name.text = ""
             self.ids.website.text = ""
             self.ids.username.text = ""
             self.ids.passwd.text = ""
