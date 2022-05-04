@@ -64,9 +64,10 @@ class PasswordManager:
             master_key_hash = create_master_key(password)
             self.master_db.insert_master_information(master_key_hash, self.email)
             self.user_logged_in = True
-            logger.info("Successfully created user account with e-mail: %s.", self.email)
+            logger.info("Successfully created user account with e-mail: {}.".format(self.email))
             return True
         except Exception as e:
+            logger.error("User account creation with e-mail: {} failed.".format(self.email))
             return False
 
     def check_user_exists(self):
@@ -96,7 +97,8 @@ class PasswordManager:
                     self.user_logged_in = True
                     logger.info("User with e-mail '{}' successfully logged in.".format(email))
                     return True
-            logger.info("E-mail or password is incorrect.")
+                logger.error("User with e-mail '{}' failed to log in.".format(email))
+            logger.error("E-mail or password is incorrect.")
             return False
         except Exception as e:
             return False
@@ -134,7 +136,7 @@ class PasswordManager:
             if self.check_user_logged_in():
                 logger.info("Adding new credentials into password_manager.")
                 if name == "" or username == "" or password == "":
-                    logger.info("Credentials contain empty string. Not adding to DB.")
+                    logger.error("Credentials contain empty string. Not adding to DB.")
                     return False
                 encrypted_password = encrypt_message(password, self.master_password)
                 credentials = Credentials(name, site, username, encrypted_password)
@@ -142,7 +144,7 @@ class PasswordManager:
                 logger.info("Credentials added successfully.")
                 return True
         except Exception as e:
-            logger.info("Credentials NOT added.")
+            logger.error("Credentials NOT added.")
             return False
         logger.error("User not logged in.")
         return False
@@ -169,7 +171,7 @@ class PasswordManager:
                 logger.info("Credentials edited successfully.")
                 return True
         except Exception as e:
-            logger.info("Credentials NOT edited.")
+            logger.error("Credentials NOT edited.")
             return False
         logger.error("User not logged in.")
         return False
@@ -189,7 +191,7 @@ class PasswordManager:
                 logger.info("Credentials deleted successfully.")
                 return True
         except Exception as e:
-            logger.info("Credentials NOT deleted.")
+            logger.error("Credentials NOT deleted.")
             return False
         logger.error("User not logged in.")
         return False
@@ -223,6 +225,7 @@ class PasswordManager:
                 decrypted_password = decrypt_message(password, self.master_password)
                 return decrypted_password
         except Exception as e:
+            logger.error("Getting password for specified credentials failed.")
             return None
         logger.error("User not logged in.")
         return None

@@ -137,6 +137,7 @@ class LoggedIn(Screen):
                 else:
                     self.add_credential_item(creds[0], creds[1], creds[2], creds[3])
         except Exception as e:
+            logger.error("Exception occurred during listing credentials. {}".format(e))
             return None
 
     def add_credential_item(self, cred_id, name, website, username):
