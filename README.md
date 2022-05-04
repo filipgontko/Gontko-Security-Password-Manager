@@ -20,7 +20,7 @@ Run the `main.py` script in the project directory.
 ```sh
 $ python main.py
 ```
-**_NOTE:_** Do not share **secret.key**, **master_secret.key**, **master_key_salt.bin** and **pwdmngrdb.db** as they contain sensitive 
+**_NOTE:_** Do not share **master_key_salt.bin** and **pwdmngrdb.db** as they contain sensitive 
 information.
 
 # Author
