@@ -6,58 +6,67 @@ import os
 import pwnedpasswords
 import pyotp
 import qrcode
+import keyring
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from backend.my_logger import logger
 
 BLOCK_SIZE = 16
-OTP_BASE = "JBSWY3DPEHPK3PXP"
+NAMESPACE = "gontko-security-password-manager"
 
 
-def generate_crypto_key_base(master=False):
+def generate_crypto_key_base(keyname):
     """
     Generate and write into a file a crypto key base that will be used to encrypt and decrypt messages.
     Returns:
         None
     """
-    if not (key_exists()):
-        key = generate_password(25)
-        file_name = "secret.key"
-        if master:
-            file_name = "master_secret.key"
+    if not (key_exists(keyname)):
         try:
-            with open(file_name, "w") as crypto_key_file:
-                crypto_key_file.write(key)
-        except IOError as e:
+            key = generate_password(64)
+            keyring.set_password(NAMESPACE, keyname, key)
+        except Exception as e:
             return None
 
 
-def key_exists(master=False):
+def generate_otp_key_base():
+    """
+    Generate a random_base32 secret compatible with Google Authenticator and other OTP apps.
+    Returns:
+        Random key in base32
+    """
+    if not (key_exists("otp.key")):
+        try:
+            keyring.set_password(NAMESPACE, "otp.key", pyotp.random_base32())
+        except Exception as e:
+            logger.error("Exception occurred during otp key base generation")
+
+
+def key_exists(keyname):
     """
     Validate if a key exists
     Returns:
          True if the key exists, False otherwise
     """
-    file_name = "secret.key"
-    if master:
-        file_name = "master_secret.key"
-    return os.path.isfile(file_name)
+    cred = keyring.get_credential(NAMESPACE, keyname)
+    return cred is not None
 
 
-def load_crypto_key_base_from_file(master=False):
+def get_keyring_password(keyname):
     """
-    Load the secret key from a file.
+    Get a secret stored in a keyring.
+    Args:
+        keyname: Name of the key
+
     Returns:
-         Crypto key base.
+        Secret.
     """
     try:
-        file_name = "secret.key"
-        if master:
-            file_name = "master_secret.key"
-        with open(file_name, "r") as reader:
-            return reader.readline()
-    except IOError as e:
+        cred = keyring.get_credential(NAMESPACE, keyname)
+        return cred.password
+    except Exception as e:
+        logger.error("Exception occurred while getting secret from keyring. {}".format(e))
         return None
 
 
@@ -72,9 +81,9 @@ def encrypt_message(message, password):
         Encrypted message.
     """
     salt = secrets.token_bytes(BLOCK_SIZE)
-    if not key_exists():
-        generate_crypto_key_base()
-    key_base = load_crypto_key_base_from_file() + password
+    if not key_exists("secret.key"):
+        generate_crypto_key_base("secret.key")
+    key_base = get_keyring_password("secret.key") + password
     kdf = PBKDF2(key_base, salt, 64, 1000)
     key = kdf[:32]
     cipher_config = AES.new(key, AES.MODE_GCM)
@@ -105,7 +114,7 @@ def decrypt_message(encrypted_message, password):
     except IOError as e:
         return None
 
-    key_base = load_crypto_key_base_from_file() + password
+    key_base = get_keyring_password("secret.key") + password
     kdf = PBKDF2(key_base, salt, 64, 1000)
     key = kdf[:32]
     cipher_config = AES.new(key, AES.MODE_GCM, nonce=nonce)
@@ -121,9 +130,9 @@ def create_master_key(master_password):
          Hash of the given master key.
     """
     salt = secrets.token_bytes(32)
-    if not key_exists():
-        generate_crypto_key_base(master=True)
-    key_base = load_crypto_key_base_from_file(master=True)
+    if not key_exists("master_secret.key"):
+        generate_crypto_key_base("master_secret.key")
+    key_base = get_keyring_password("master_secret.key")
     master_key = master_password + key_base
     derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
@@ -149,7 +158,7 @@ def compare_master_password_hash(master_password):
     except IOError as e:
         return None
 
-    key_base = load_crypto_key_base_from_file(master=True)
+    key_base = get_keyring_password("master_secret.key")
     master_key = master_password + key_base
     derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
@@ -161,6 +170,7 @@ def generate_password(length=12):
     Generate a strong password.
     Args:
         length: Length of the password (minimum length is 12 characters).
+        otp: Optional value to generate OTP key base. Needs to be only lower, upper and num.
 
     Returns:
         Password string.
@@ -170,8 +180,9 @@ def generate_password(length=12):
     num = string.digits
     symbols = string.punctuation
 
-    all = lower + upper + num + symbols
-    pwd_suggestion = random.sample(all, length)
+    all_chars = lower + upper + num + symbols
+
+    pwd_suggestion = random.sample(all_chars, length)
 
     generated_password = "".join(pwd_suggestion)
 
@@ -231,7 +242,8 @@ def generate_otp_url(email):
     Returns:
         URL that can be converted to QR and used in Google Authenticator app.
     """
-    return pyotp.totp.TOTP(OTP_BASE).provisioning_uri(name=email, issuer_name='Gontko Security Password Manager')
+    generate_otp_key_base()
+    return pyotp.totp.TOTP(get_keyring_password("otp.key")).provisioning_uri(name=email, issuer_name='Gontko Security Password Manager')
 
 
 def generate_otp_qr_for_auth(otp_url):
@@ -279,5 +291,5 @@ def compare_totp(google_otp):
     Returns:
         True if matches, False otherwise.
     """
-    totp = pyotp.TOTP(OTP_BASE)
+    totp = pyotp.TOTP(get_keyring_password("otp.key"))
     return totp.now() == google_otp
