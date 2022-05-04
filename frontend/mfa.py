@@ -10,7 +10,7 @@ class MFA(Screen):
     """
     def __init__(self, password_manager):
         """
-        Initialize Signup screen.
+        Initialize MFA screen.
         Args:
             password_manager: Password manager object.
         """
@@ -29,4 +29,4 @@ class MFA(Screen):
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
         except Exception as e:
-            logger.error("Exception occurred during signup. {}".format(e))
+            logger.error("Exception occurred during comparison of OTP. {}".format(e))
