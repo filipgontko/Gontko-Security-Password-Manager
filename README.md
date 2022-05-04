@@ -2,9 +2,9 @@
 Password manager as a personal project to get better in coding and understanding cryptography.
 
 # Features
-* Encryption/Decryption for passwords storage (AES256)
+* Encryption/Decryption for passwords storage (AES-256)
   * combination of a master password, secret.key file and salt
-* Master key stored as a hash (SHA256) 
+* Master key stored as a hash (SHA-256) 
   * combination of master password, master_secret.key file and salt
 * Password generator 
 * Password strength meter
