@@ -40,4 +40,4 @@ class Signup(Screen):
             self.parent.current = "mfa"
             self.parent.transition.direction = "left"
         except Exception as e:
-            logger.error("Exception occurred during generating OTP. {}".format(e))
+            logger.error("Exception occurred during setting up MFA. {}".format(e))
