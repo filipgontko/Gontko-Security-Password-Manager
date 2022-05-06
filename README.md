@@ -19,10 +19,12 @@ Password manager as a personal project to get better in coding and understanding
 3. Change you current working directory the downloaded file and run `pip3 install -r requirements.txt`
 
 # Run 
-Run the `main.py` script in the project directory. (Run with the alias you chose for python3)
+Run the `main.py` script in the project directory via command line (Run with the alias you chose for python3)
 ```sh
 $ python main.py
 ```
+or double click the `main.py` script.
+
 **_NOTE:_** Do not share **master_key_salt.bin** and **pwdmngrdb.db** as they contain sensitive 
 information.
 
