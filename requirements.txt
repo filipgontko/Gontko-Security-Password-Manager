@@ -5,3 +5,5 @@ pyotp~=2.6.0
 qrcode~=7.3.1
 keyring~=23.5.0
 pycryptodome
+xclip
+xsel
