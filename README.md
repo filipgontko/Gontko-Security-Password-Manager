@@ -25,7 +25,7 @@ $ python main.py
 ```
 or double click the `main.py` script.
 
-**_NOTE:_** Do not share **master_key_salt.bin** and **pwdmngrdb.db** as they contain sensitive 
+**_NOTE:_** Do not share **master_key_salt.bin**, **chacha20_key.bin** and **pwdmngrdb.db** as they contain sensitive 
 information.
 
 # Author
