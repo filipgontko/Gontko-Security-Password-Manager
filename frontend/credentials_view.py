@@ -2,7 +2,7 @@ from kivy.uix.screenmanager import Screen
 from kivymd.uix.button import MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
 
-from backend.crypto import check_if_pwned, check_password_strength
+from backend.crypto import check_if_pwned, check_password_strength, chacha20_decrypt, chacha20_encrypt
 from backend.my_logger import logger
 from backend.password_manager import generate_password
 
@@ -32,7 +32,7 @@ class CredentialsView(Screen):
             self.ids.cred_name.text = self.get_cred_name()
             self.ids.website.text = self.get_site()
             self.ids.username.text = self.get_username()
-            self.ids.passwd.text = self.get_password()
+            self.ids.passwd.text = chacha20_decrypt(self.get_password())
             self.show_password_strength()
             self.is_pwned_message()
         except Exception as e:
@@ -103,7 +103,7 @@ class CredentialsView(Screen):
             Decrypted password string if successful, empty string otherwise.
         """
         try:
-            return self.password_manager.get_password_from_db(self.password_manager.credential_id)
+            return chacha20_encrypt(self.password_manager.get_password_from_db(self.password_manager.credential_id))
         except Exception:
             return ""
 
@@ -112,7 +112,7 @@ class CredentialsView(Screen):
         Shows a dialog with a message that the password had been pwned!
         """
         try:
-            if check_if_pwned(self.ids.passwd.text):
+            if check_if_pwned(chacha20_encrypt(self.ids.passwd.text)):
                 self.dialog = MDDialog(text="OOOPS! Your password has been pwned! Change it now")
                 self.dialog.open()
                 self.dialog = None
@@ -126,7 +126,7 @@ class CredentialsView(Screen):
         try:
             strength_word = check_password_strength(self.ids.passwd.text)
 
-            if check_if_pwned(self.ids.passwd.text):
+            if check_if_pwned(chacha20_encrypt(self.ids.passwd.text)):
                 self.ids.pwned.text = "Your password has been pwned!"
                 strength_word = "Weak"
             else:
@@ -240,7 +240,7 @@ class CredentialsView(Screen):
                                                    self.ids.cred_name.text,
                                                    self.ids.website.text,
                                                    self.ids.username.text,
-                                                   self.ids.passwd.text)
+                                                   chacha20_encrypt(self.ids.passwd.text))
         except Exception as e:
             logger.error("Exception occurred while saving credentials. {}".format(e))
 

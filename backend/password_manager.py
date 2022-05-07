@@ -3,7 +3,7 @@ import re
 from backend import crypto
 from backend.credentials import Credentials
 from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message, decrypt_message, \
-    generate_chacha20_key, chacha20_encrypt
+    generate_chacha20_key, chacha20_encrypt, chacha20_decrypt
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
@@ -140,7 +140,7 @@ class PasswordManager:
                 if name == "" or username == "" or password == "":
                     logger.error("Credentials contain empty string. Not adding to DB.")
                     return False
-                encrypted_password = encrypt_message(password, self.master_password)
+                encrypted_password = encrypt_message(chacha20_decrypt(password), self.master_password)
                 credentials = Credentials(name, site, username, encrypted_password)
                 self.credentials_db.insert_credentials(credentials)
                 logger.info("Credentials added successfully.")
@@ -167,7 +167,7 @@ class PasswordManager:
         try:
             if self.check_user_logged_in():
                 logger.info("Editing credentials within password_manager.")
-                encrypted_password = encrypt_message(password, self.master_password)
+                encrypted_password = encrypt_message(chacha20_decrypt(password), self.master_password)
                 credentials = Credentials(name, site, username, encrypted_password)
                 self.credentials_db.edit_credentials(cred_id, credentials)
                 logger.info("Credentials edited successfully.")

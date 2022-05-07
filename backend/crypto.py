@@ -143,7 +143,7 @@ def encrypt_message(message, password):
     salt = secrets.token_bytes(BLOCK_SIZE)
     if not key_exists("secret.key"):
         generate_crypto_key_base("secret.key")
-    key_base = get_keyring_password("secret.key") + password
+    key_base = get_keyring_password("secret.key") + chacha20_decrypt(password)
     kdf = PBKDF2(key_base, salt, 64, 1000)
     key = kdf[:32]
     cipher_config = AES.new(key, AES.MODE_GCM)
@@ -174,7 +174,7 @@ def decrypt_message(encrypted_message, password):
     except IOError as e:
         return None
 
-    key_base = get_keyring_password("secret.key") + password
+    key_base = get_keyring_password("secret.key") + chacha20_decrypt(password)
     kdf = PBKDF2(key_base, salt, 64, 1000)
     key = kdf[:32]
     cipher_config = AES.new(key, AES.MODE_GCM, nonce=nonce)
@@ -290,7 +290,7 @@ def check_if_pwned(password):
     Returns:
         True if found, False otherwise.
     """
-    return pwnedpasswords.check(password, plain_text=True)
+    return pwnedpasswords.check(chacha20_decrypt(password), plain_text=True)
 
 
 def generate_otp_url(email):

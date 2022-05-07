@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.dialog import MDDialog
 
-from backend.crypto import check_if_pwned
+from backend.crypto import check_if_pwned, chacha20_encrypt
 from backend.my_logger import logger
 from backend.password_manager import generate_password
 
@@ -86,6 +86,7 @@ class LoggedIn(Screen):
         """
         try:
             self.is_pwned_message()
+            password = chacha20_encrypt(password)
             self.password_manager.add_new_credentials(name, site, username, password)
             self.ids.cred_name.text = ""
             self.ids.website.text = ""
@@ -167,7 +168,7 @@ class LoggedIn(Screen):
         Shows a dialog with a message that the password had been pwned!
         """
         try:
-            if check_if_pwned(self.ids.passwd.text):
+            if check_if_pwned(chacha20_encrypt(self.ids.passwd.text)):
                 self.dialog = MDDialog(text="OOOPS! Your password has been pwned! Change it now")
                 self.dialog.open()
                 self.dialog = None
