@@ -133,8 +133,6 @@ dmypy.json
 tests.logs/
 
 # Secrets and DB
-*encrypted_message.bin
-*secret.key
-*master_key_salt.bin
+*.bin
 *.db
 */qr.png

@@ -8,7 +8,9 @@ import pyotp
 import qrcode
 import keyring
 
-from Crypto.Cipher import AES
+from base64 import b64encode, b64decode
+from Crypto.Cipher import AES, ChaCha20
+from Crypto.Random import get_random_bytes
 from Crypto.Protocol.KDF import PBKDF2
 from backend.my_logger import logger
 
@@ -68,6 +70,53 @@ def get_keyring_password(keyname):
     except Exception as e:
         logger.error("Exception occurred while getting secret from keyring. {}".format(e))
         return None
+
+
+def chacha20_encrypt(secret):
+    """
+    ChaCha20 encryption used for in memory secrets protection.
+    Args:
+        secret: Secret to be encrypted.
+
+    Returns:
+        Tuple (nonce, ciphertext_b64)
+    """
+    try:
+        key = get_random_bytes(32)
+        cipher = ChaCha20.new(key=key)
+        ciphertext = cipher.encrypt(str.encode(secret))
+
+        nonce = b64encode(cipher.nonce).decode("utf-8")
+        ciphertext_b64 = b64encode(ciphertext).decode('utf-8')
+
+        with open("chacha20_key.bin", "wb") as key_output:
+            key_output.write(key)
+
+        return nonce, ciphertext_b64
+    except Exception as e:
+        return None
+
+
+def chacha20_decrypt(secret):
+    """
+    ChaCha20 encryption used for in memory secrets protection. Decrypts the password tuple
+    Args:
+        secret: Secret to be decrypted.
+
+    Returns:
+        Plaintext secret as a string.
+    """
+    try:
+        with open("chacha20_key.bin", "rb") as file:
+            key = file.read()
+
+        nonce = b64decode(secret[0])
+        ciphertext = b64decode(secret[1])
+        cipher = ChaCha20.new(key=key, nonce=nonce)
+        plaintext = cipher.decrypt(ciphertext).decode("utf-8")
+        return plaintext
+    except Exception as e:
+        logger.error("Incorrect decryption for in memory secret protection. {}".format(e))
 
 
 def encrypt_message(message, password):
