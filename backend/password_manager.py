@@ -225,7 +225,7 @@ class PasswordManager:
                 logger.info("Getting password for specified credentials.")
                 password = self.credentials_db.get_password(credential_id)
                 decrypted_password = decrypt_message(password, self.master_password)
-                return decrypted_password
+                return chacha20_encrypt(decrypted_password)
         except Exception as e:
             logger.error("Getting password for specified credentials failed.")
             return None

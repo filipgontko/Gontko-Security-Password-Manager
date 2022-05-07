@@ -103,7 +103,7 @@ class CredentialsView(Screen):
             Decrypted password string if successful, empty string otherwise.
         """
         try:
-            return chacha20_encrypt(self.password_manager.get_password_from_db(self.password_manager.credential_id))
+            return self.password_manager.get_password_from_db(self.password_manager.credential_id)
         except Exception:
             return ""
 
