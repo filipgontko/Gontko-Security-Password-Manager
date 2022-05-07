@@ -5,7 +5,7 @@ Password manager as a personal project to get better in coding and understanding
 * Encryption/Decryption for passwords storage (AES-256)
   * combination of a master password, secret.key file and salt
 * Master key stored as a hash (SHA-256) 
-  * combination of master password, master_secret.key file and salt
+  * combination of master password, master_secret.key file, username of currently logged-in user on a computer and salt
 * Password generator 
 * Password strength meter
 * Check if password has been pwned
