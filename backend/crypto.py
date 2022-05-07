@@ -10,7 +10,6 @@ import keyring
 
 from base64 import b64encode, b64decode
 from Crypto.Cipher import AES, ChaCha20
-from Crypto.Random import get_random_bytes
 from Crypto.Protocol.KDF import PBKDF2
 from backend.my_logger import logger
 
@@ -77,7 +76,7 @@ def generate_chacha20_key():
     Generate a key for ChaCha20 encryption and store it in a binary file format.
     """
     try:
-        key = get_random_bytes(32)
+        key = secrets.token_bytes(32)
         with open("chacha20_key.bin", "wb") as key_output:
             key_output.write(key)
     except Exception as e:
@@ -193,7 +192,7 @@ def create_master_key(master_password):
     if not key_exists("master_secret.key"):
         generate_crypto_key_base("master_secret.key")
     key_base = get_keyring_password("master_secret.key")
-    master_key = chacha20_decrypt(master_password) + key_base
+    master_key = chacha20_decrypt(master_password) + key_base + os.getlogin()
     derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
 
@@ -219,7 +218,7 @@ def recreate_master_password_hash(master_password):
         return None
 
     key_base = get_keyring_password("master_secret.key")
-    master_key = chacha20_decrypt(master_password) + key_base
+    master_key = chacha20_decrypt(master_password) + key_base + os.getlogin()
     derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
     return digest
