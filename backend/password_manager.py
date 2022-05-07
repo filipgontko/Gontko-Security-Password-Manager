@@ -2,7 +2,7 @@ import re
 
 from backend import crypto
 from backend.credentials import Credentials
-from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message, decrypt_message, \
+from backend.crypto import recreate_master_password_hash, create_master_key, encrypt_message, decrypt_message, \
     generate_chacha20_key, chacha20_encrypt, chacha20_decrypt
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
@@ -93,7 +93,7 @@ class PasswordManager:
             logger.info("Initiating login...")
             if self.check_user_exists():
                 stored_master_key_hash = self.master_db.get_master_key_hash(self.email)
-                master_key_hash = compare_master_password_hash(password)
+                master_key_hash = recreate_master_password_hash(password)
                 if stored_master_key_hash == master_key_hash:
                     self.master_password = password
                     self.user_logged_in = True

@@ -23,7 +23,7 @@ class CryptoTestCase(unittest.TestCase):
 
     def test_hash_key(self):
         stored_hashed_key = create_master_key()
-        self.assertEqual(stored_hashed_key, compare_master_password_hash())
+        self.assertEqual(stored_hashed_key, recreate_master_password_hash())
 
     def test_generate_password(self):
         generated_password = generate_password(otp=Optional)

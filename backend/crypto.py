@@ -206,7 +206,7 @@ def create_master_key(master_password):
     return digest
 
 
-def compare_master_password_hash(master_password):
+def recreate_master_password_hash(master_password):
     """
     Compares the hash of the given master password to the hash of the saved master password hash.
     Returns:
