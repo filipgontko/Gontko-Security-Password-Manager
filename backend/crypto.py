@@ -72,6 +72,18 @@ def get_keyring_password(keyname):
         return None
 
 
+def generate_chacha20_key():
+    """
+    Generate a key for ChaCha20 encryption and store it in a binary file format.
+    """
+    try:
+        key = get_random_bytes(32)
+        with open("chacha20_key.bin", "wb") as key_output:
+            key_output.write(key)
+    except Exception as e:
+        logger.error("Exception occurred during chacha20 key generation.")
+
+
 def chacha20_encrypt(secret):
     """
     ChaCha20 encryption used for in memory secrets protection.
@@ -82,15 +94,14 @@ def chacha20_encrypt(secret):
         Tuple (nonce, ciphertext_b64)
     """
     try:
-        key = get_random_bytes(32)
+        with open("chacha20_key.bin", "rb") as file:
+            key = file.read()
+
         cipher = ChaCha20.new(key=key)
         ciphertext = cipher.encrypt(str.encode(secret))
 
         nonce = b64encode(cipher.nonce).decode("utf-8")
         ciphertext_b64 = b64encode(ciphertext).decode('utf-8')
-
-        with open("chacha20_key.bin", "wb") as key_output:
-            key_output.write(key)
 
         return nonce, ciphertext_b64
     except Exception as e:
