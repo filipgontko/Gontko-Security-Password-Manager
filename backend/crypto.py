@@ -193,7 +193,7 @@ def create_master_key(master_password):
     if not key_exists("master_secret.key"):
         generate_crypto_key_base("master_secret.key")
     key_base = get_keyring_password("master_secret.key")
-    master_key = master_password + key_base
+    master_key = chacha20_decrypt(master_password) + key_base
     derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
 
@@ -219,7 +219,7 @@ def compare_master_password_hash(master_password):
         return None
 
     key_base = get_keyring_password("master_secret.key")
-    master_key = master_password + key_base
+    master_key = chacha20_decrypt(master_password) + key_base
     derived_key = hashlib.pbkdf2_hmac('sha256', master_key.encode(), salt, 100000)
     digest = derived_key.hex()
     return digest

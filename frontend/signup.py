@@ -1,6 +1,6 @@
 from kivy.uix.screenmanager import Screen
 
-from backend.crypto import generate_otp_url, generate_otp_qr_for_auth
+from backend.crypto import generate_otp_url, generate_otp_qr_for_auth, chacha20_encrypt
 from backend.my_logger import logger
 
 
@@ -25,6 +25,7 @@ class Signup(Screen):
             password: Master password.
         """
         try:
+            password = chacha20_encrypt(password)
             if self.password_manager.sign_up(email, password):
                 self.setup_mfa()
         except Exception as e:

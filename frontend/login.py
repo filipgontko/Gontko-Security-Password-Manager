@@ -1,5 +1,6 @@
 from kivy.uix.screenmanager import Screen
 
+from backend.crypto import chacha20_encrypt
 from backend.my_logger import logger
 
 
@@ -25,6 +26,7 @@ class Login(Screen):
 
         """
         try:
+            password = chacha20_encrypt(password)
             if self.password_manager.login(email, password):
                 self.parent.current = "logged_in"
         except Exception as e:

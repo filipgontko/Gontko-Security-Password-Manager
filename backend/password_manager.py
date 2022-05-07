@@ -2,7 +2,8 @@ import re
 
 from backend import crypto
 from backend.credentials import Credentials
-from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message, decrypt_message
+from backend.crypto import compare_master_password_hash, create_master_key, encrypt_message, decrypt_message, \
+    generate_chacha20_key, chacha20_encrypt
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
@@ -49,6 +50,7 @@ class PasswordManager:
         self.credential_site = None
         self.credential_username = None
         self.credential_id = None
+        generate_chacha20_key()
 
     def sign_up(self, email, password):
         """
