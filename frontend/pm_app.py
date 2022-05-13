@@ -44,6 +44,7 @@ class PasswordManagerApp(MDApp):
         """
         try:
             Window.size = (800, 630)
+            self.icon = "images/logo.png"
             self.theme_cls.theme_style = "Dark"
             self.theme_cls.primary_palette = "Amber"
             self.theme_cls.accent_palette = "Orange"
