@@ -1,6 +1,6 @@
 from backend.my_logger import logger
 from backend.password_manager import PasswordManager
-from frontend.pm_app import PasswordManagerApp
+from frontend.pm_app import GontkoSecurityPasswordManagerApp
 
 
 def main():
@@ -9,7 +9,7 @@ def main():
     """
     try:
         password_manager = PasswordManager()
-        PasswordManagerApp(password_manager).run()
+        GontkoSecurityPasswordManagerApp(password_manager).run()
     except Exception as e:
         logger.error("Exception occurred in main(). {}".format(e))
         return None

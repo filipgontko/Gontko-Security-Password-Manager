@@ -23,7 +23,7 @@ Builder.load_file("frontend/password_manager.kv")
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 
-class PasswordManagerApp(MDApp):
+class GontkoSecurityPasswordManagerApp(MDApp):
     """
     Password manager Kivy app.
     """
