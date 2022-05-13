@@ -15,15 +15,17 @@ Password manager as a personal project to get better in coding and understanding
 1. Download and install [Python 3](https://www.python.org/) if you don't have it installed already.
    1. WINDOWS: On the installation screen, check the option to automatically set path (to use pip).
    2. UNIX: `sudo apt -y install python3-pip` to install pip3.
-2. Clone the repository to your computer via `git clone https://github.com/filipgontko/Gontko-Security-Password-Manager.git` or download it as a ZIP file from `https://github.com/filipgontko/Gontko-Security-Password-Manager`
-3. Change you current working directory to the downloaded file and run `pip3 install -r requirements.txt`
+2. Download the `Gontko Security Password Manager.zip` file from the latest release.
+3. Extract the ZIP file
 
-# Run 
+# Execution 
+## Windows
+Run the `Gontko Security Password Manager.exe` file
+## Linux
 Run the `main.py` script in the project directory via command line (Run with the alias you chose for python3)
 ```sh
 $ python main.py
 ```
-or double click the `main.py` script.
 
 **_NOTE:_** Do not share **master_key_salt.bin**, **chacha20_key.bin** and **pwdmngrdb.db** as they contain sensitive 
 information.
