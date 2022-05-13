@@ -51,6 +51,7 @@ class CredentialsView(Screen):
             self.ids.passwd.password = True
             self.ids.eye_icon.icon = "eye-off"
             self.ids.pwned.text = ""
+            self.ids.copy_pass.text = "COPY"
         except Exception as e:
             logger.error("Exception occurred during on_leave(). {}".format(e))
 
