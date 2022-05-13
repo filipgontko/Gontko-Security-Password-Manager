@@ -1,7 +1,9 @@
 from kivy.lang import Builder
 from kivy.properties import StringProperty
-from kivymd.app import MDApp
+from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
+from kivy.config import Config
+from kivymd.app import MDApp
 from kivymd.uix.list import TwoLineListItem
 from backend.my_logger import logger
 from frontend.credentials_view import CredentialsView
@@ -9,7 +11,7 @@ from frontend.logged_in import LoggedIn
 from frontend.login import Login
 from frontend.mfa import MFA
 from frontend.signup import Signup
-from kivy.core.window import Window
+
 
 
 class CustomTwoLineCredsListItem(TwoLineListItem):
@@ -18,7 +20,8 @@ class CustomTwoLineCredsListItem(TwoLineListItem):
 
 # This needs to be global in order for the screen manager to lead the screens.
 Builder.load_file("frontend/password_manager.kv")
-
+# Disable mouse right click generating orange dot
+Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 class PasswordManagerApp(MDApp):
     """
