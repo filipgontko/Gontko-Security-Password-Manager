@@ -13,7 +13,6 @@ from frontend.mfa import MFA
 from frontend.signup import Signup
 
 
-
 class CustomTwoLineCredsListItem(TwoLineListItem):
     credential = StringProperty()
 
@@ -22,6 +21,7 @@ class CustomTwoLineCredsListItem(TwoLineListItem):
 Builder.load_file("frontend/password_manager.kv")
 # Disable mouse right click generating orange dot
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
+
 
 class PasswordManagerApp(MDApp):
     """
