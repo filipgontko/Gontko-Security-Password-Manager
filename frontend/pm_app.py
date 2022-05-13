@@ -23,7 +23,7 @@ Builder.load_file("frontend/password_manager.kv")
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 
-class PasswordManagerApp(MDApp):
+class GontkoSecurityPasswordManagerApp(MDApp):
     """
     Password manager Kivy app.
     """
@@ -44,6 +44,7 @@ class PasswordManagerApp(MDApp):
         """
         try:
             Window.size = (800, 630)
+            self.icon = "images/logo.png"
             self.theme_cls.theme_style = "Dark"
             self.theme_cls.primary_palette = "Amber"
             self.theme_cls.accent_palette = "Orange"
