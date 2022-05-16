@@ -87,13 +87,13 @@ class LoggedIn(Screen):
         try:
             self.is_pwned_message()
             password = chacha20_encrypt(password)
-            self.password_manager.add_new_credentials(name, site, username, password)
-            self.ids.cred_name.text = ""
-            self.ids.website.text = ""
-            self.ids.username.text = ""
-            self.ids.passwd.text = ""
-            self.ids.generate_pwd.text = ""
-            self.refresh_search()
+            if self.password_manager.add_new_credentials(name, site, username, password):
+                self.ids.cred_name.text = ""
+                self.ids.website.text = ""
+                self.ids.username.text = ""
+                self.ids.passwd.text = ""
+                self.ids.generate_pwd.text = ""
+                self.refresh_search()
         except Exception as e:
             logger.error("Exception occurred while add_credentials(). {}".format(e))
 
