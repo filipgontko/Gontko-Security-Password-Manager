@@ -17,19 +17,21 @@ class Signup(Screen):
         super(Signup, self).__init__()
         self.password_manager = password_manager
 
-    def signup(self, email, password):
+    def signup(self, username, password):
         """
         Sign up the user to the password manager.
         Args:
-            email: E-mail address of the user.
+            username: Username of the user.
             password: Master password.
         """
         try:
             password = chacha20_encrypt(password)
-            if self.password_manager.sign_up(email, password):
+            if self.password_manager.sign_up(username, password):
                 # self.setup_mfa()
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
+                self.ids.username.text = ""
+                self.ids.password.text = ""
         except Exception as e:
             logger.error("Exception occurred during signup. {}".format(e))
 
@@ -38,7 +40,7 @@ class Signup(Screen):
         Generate OTP for user as MFA.
         """
         try:
-            url = generate_otp_url(self.password_manager.email)
+            url = generate_otp_url(self.password_manager.username)
             generate_otp_qr_for_auth(url)
             self.parent.current = "mfa"
             self.parent.transition.direction = "left"

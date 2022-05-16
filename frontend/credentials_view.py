@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.button import MDRoundFlatButton, MDFillRoundFlatButton
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.snackbar import Snackbar
 
 from backend.crypto import check_if_pwned, check_password_strength, chacha20_decrypt, chacha20_encrypt
 from backend.my_logger import logger
@@ -274,3 +275,17 @@ class CredentialsView(Screen):
         except Exception as e:
             logger.error("Exception occurred during password generation. {}".format(e))
             return ""
+
+    def show_snackbar(self):
+        """
+        Shows a snackbar with a message on the bottom of the screen.
+        """
+        snackbar = Snackbar(
+            text="Generated password has been copied to clipboard!",
+            snackbar_x="10dp",
+            snackbar_y="10dp",
+            height=30,
+            duration=1
+        )
+        snackbar.size_hint_x = (self.ids.grid.width - (snackbar.snackbar_x * 2)) / self.ids.grid.width
+        snackbar.open()

@@ -1,5 +1,6 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.snackbar import Snackbar
 
 from backend.crypto import check_if_pwned, chacha20_encrypt
 from backend.my_logger import logger
@@ -87,13 +88,13 @@ class LoggedIn(Screen):
         try:
             self.is_pwned_message()
             password = chacha20_encrypt(password)
-            self.password_manager.add_new_credentials(name, site, username, password)
-            self.ids.cred_name.text = ""
-            self.ids.website.text = ""
-            self.ids.username.text = ""
-            self.ids.passwd.text = ""
-            self.ids.generate_pwd.text = ""
-            self.refresh_search()
+            if self.password_manager.add_new_credentials(name, site, username, password):
+                self.ids.cred_name.text = ""
+                self.ids.website.text = ""
+                self.ids.username.text = ""
+                self.ids.passwd.text = ""
+                self.ids.generate_pwd.text = ""
+                self.refresh_search()
         except Exception as e:
             logger.error("Exception occurred while add_credentials(). {}".format(e))
 
@@ -121,6 +122,20 @@ class LoggedIn(Screen):
         except Exception as e:
             logger.error("Exception occurred during password generation. {}".format(e))
             return ""
+
+    def show_snackbar(self):
+        """
+        Shows a snackbar with a message on the bottom of the screen.
+        """
+        snackbar = Snackbar(
+            text="Generated password has been copied to clipboard!",
+            snackbar_x="10dp",
+            snackbar_y="10dp",
+            height=30,
+            duration=1
+        )
+        snackbar.size_hint_x = (self.ids.logged_in_screen.width - (snackbar.snackbar_x * 2)) / self.ids.logged_in_screen.width
+        snackbar.open()
 
     def set_list_credentials(self, text="", search=True):
         """
