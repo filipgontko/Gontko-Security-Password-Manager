@@ -30,6 +30,8 @@ class Signup(Screen):
                 # self.setup_mfa()
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
+                self.ids.email.text = ""
+                self.ids.password.text = ""
         except Exception as e:
             logger.error("Exception occurred during signup. {}".format(e))
 
