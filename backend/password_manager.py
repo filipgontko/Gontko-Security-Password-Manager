@@ -9,21 +9,6 @@ from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
 
 
-def check_email(email):
-    """
-    Checks if e-mail is in valid format.
-    Returns:
-        True if successful, False otherwise.
-    """
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    if re.fullmatch(regex, email):
-        logger.info("Valid e-mail address format.")
-        return True
-    else:
-        logger.info("Invalid e-mail address format.")
-        return False
-
-
 def generate_password(length):
     """
     Generate password on button click.
@@ -42,7 +27,7 @@ class PasswordManager:
         Initialize password manager.
         """
         self.user_logged_in = False
-        self.email = None
+        self.username = None
         self.master_db = MasterKeyDB()
         self.master_password = None
         self.credentials_db = CredentialsDB()
@@ -52,24 +37,22 @@ class PasswordManager:
         self.credential_id = None
         generate_chacha20_key()
 
-    def sign_up(self, email, password):
+    def sign_up(self, username, password):
         """
         Sign up to the password manager.
         Returns:
             True if successful, False otherwise.
         """
-        if not check_email(email):
-            return False
         try:
-            self.email = email
+            self.username = username
             self.master_password = password
             master_key_hash = create_master_key(password)
-            self.master_db.insert_master_information(master_key_hash, self.email)
+            self.master_db.insert_master_information(master_key_hash, self.username)
             self.user_logged_in = True
-            logger.info("Successfully created user account with e-mail: {}.".format(self.email))
+            logger.info("Successfully created user account with username: {}.".format(self.username))
             return True
         except Exception as e:
-            logger.error("User account creation with e-mail: {} failed.".format(self.email))
+            logger.error("User account creation with username: {} failed.".format(self.username))
             return False
 
     def check_user_exists(self):
@@ -78,29 +61,27 @@ class PasswordManager:
         Returns:
             True if successful, False otherwise.
         """
-        return self.master_db.check_user_record_exists(self.email)
+        return self.master_db.check_user_record_exists(self.username)
 
-    def login(self, email, password):
+    def login(self, username, password):
         """
         Login to the password manager.
         Returns:
             True if successful, False otherwise.
         """
-        if not check_email(email):
-            return False
         try:
-            self.email = email
+            self.username = username
             logger.info("Initiating login...")
             if self.check_user_exists():
-                stored_master_key_hash = self.master_db.get_master_key_hash(self.email)
+                stored_master_key_hash = self.master_db.get_master_key_hash(self.username)
                 master_key_hash = recreate_master_password_hash(password)
                 if stored_master_key_hash == master_key_hash:
                     self.master_password = password
                     self.user_logged_in = True
-                    logger.info("User with e-mail '{}' successfully logged in.".format(email))
+                    logger.info("User with username '{}' successfully logged in.".format(username))
                     return True
-                logger.error("User with e-mail '{}' failed to log in.".format(email))
-            logger.error("E-mail or password is incorrect.")
+                logger.error("User with username '{}' failed to log in.".format(username))
+            logger.error("Username or password is incorrect.")
             return False
         except Exception as e:
             return False

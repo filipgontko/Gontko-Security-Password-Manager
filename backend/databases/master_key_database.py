@@ -11,7 +11,7 @@ class MasterKeyDB(Database):
 
     def create_table(self):
         """
-        Create table for storing master key hash and e-mail address it's connected with.
+        Create table for storing master key hash and username it's connected with.
         Returns:
              True if successful, False otherwise.
         """
@@ -20,7 +20,7 @@ class MasterKeyDB(Database):
             cursor = self.connection.cursor()
             create_table_query = """CREATE TABLE IF NOT EXISTS master_table (
                         master_key_hash TEXT,
-                        email TEXT
+                        username TEXT
                         );"""
             cursor.execute(create_table_query)
             self.connection.commit()
@@ -33,12 +33,12 @@ class MasterKeyDB(Database):
         finally:
             self.disconnect_db()
 
-    def insert_master_information(self, master_key_hash, email):
+    def insert_master_information(self, master_key_hash, username):
         """
         Insert information into the database.
         Args:
             master_key_hash: Master key hash.
-            email: E-mail address of the account connected to the master key.
+            username: Username of the account connected to the master key.
 
         Returns:
             True if successful, False otherwise.
@@ -46,9 +46,9 @@ class MasterKeyDB(Database):
         try:
             self.connect_db()
             cursor = self.connection.cursor()
-            insert_query = """INSERT INTO master_table(master_key_hash, email) 
+            insert_query = """INSERT INTO master_table(master_key_hash, username) 
                        VALUES (?, ?);"""
-            cursor.execute(insert_query, (master_key_hash, email))
+            cursor.execute(insert_query, (master_key_hash, username))
             self.connection.commit()
             cursor.close()
             logger.info("Successfully inserted information into master table.")
@@ -59,11 +59,11 @@ class MasterKeyDB(Database):
         finally:
             self.disconnect_db()
 
-    def edit_master_information(self, email, master_key_hash_new):
+    def edit_master_information(self, username, master_key_hash_new):
         """
         Edit master key for an account. Hash (PBKDF2-SHA-256) of the new master key will be stored.
         Args:
-            email: E-mail of the account connected to the master key.
+            username: Username of the account connected to the master key.
             master_key_hash_new: New master key hash.
 
         Returns:
@@ -74,8 +74,8 @@ class MasterKeyDB(Database):
             cursor = self.connection.cursor()
             update_query = """UPDATE master_table 
                             SET master_key_hash = ? 
-                            WHERE email = ?"""
-            cursor.execute(update_query, (master_key_hash_new, email))
+                            WHERE username = ?"""
+            cursor.execute(update_query, (master_key_hash_new, username))
             self.connection.commit()
             cursor.close()
             logger.info("Successfully updated master key information within master table.")
@@ -86,11 +86,11 @@ class MasterKeyDB(Database):
         finally:
             self.disconnect_db()
 
-    def get_master_key_hash(self, email):
+    def get_master_key_hash(self, username):
         """
         Get the master key hash for the specified account.
         Args:
-            email: E-mail address of the account for which to retrieve the master key hash.
+            username: Username of the account for which to retrieve the master key hash.
 
         Returns:
             Hashed master key
@@ -99,7 +99,7 @@ class MasterKeyDB(Database):
             self.connect_db()
             cursor = self.connection.cursor()
             get_mkey_query = """SELECT master_key_hash FROM master_table
-                          WHERE email = '{}'""".format(email)
+                          WHERE username = '{}'""".format(username)
             cursor.execute(get_mkey_query)
             self.connection.commit()
             record = cursor.fetchone()[0]
@@ -111,23 +111,23 @@ class MasterKeyDB(Database):
         finally:
             self.disconnect_db()
 
-    def check_user_record_exists(self, email):
+    def check_user_record_exists(self, username):
         """
         Check if the specified user exists.
         Args:
-            email: E-mail address of the account which needs to be checked for existence.
+            username: Username of the account which needs to be checked for existence.
 
         Returns:
-            True if user with the e-mail address exists, False otherwise.
+            True if user with the username exists, False otherwise.
         """
         try:
             self.connect_db()
             cursor = self.connection.cursor()
             total_query = """SELECT EXISTS (SELECT 1 FROM master_table
-                              WHERE email = '{}')""".format(email)
+                              WHERE username = '{}')""".format(username)
             cursor.execute(total_query)
             record = cursor.fetchone()[0]
-            logger.info("Checking if user with the e-mail: {} exists.".format(email))
+            logger.info("Checking if user with the username: {} exists.".format(username))
             return record
         except sqlite3.Error as error:
             print("Error while connecting to the DB - {}".format(error))

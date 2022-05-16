@@ -17,17 +17,17 @@ class Login(Screen):
         super(Login, self).__init__()
         self.password_manager = password_manager
 
-    def login(self, email, password):
+    def login(self, username, password):
         """
         Login to the password manager.
         Args:
-            email: E-mail address of the user.
+            username: Username of the user.
             password: Master password.
 
         """
         try:
             password = chacha20_encrypt(password)
-            if self.password_manager.login(email, password):
+            if self.password_manager.login(username, password):
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
                 self.ids.email.text = ""
