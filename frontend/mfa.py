@@ -20,12 +20,12 @@ class MFA(Screen):
     def on_enter(self):
         self.ids.qr.source = "images/qr.png"
 
-    def compare_otp(self, google_otp):
+    def compare_otp(self, authenticator_otp):
         """
         Compare OTP for user.
         """
         try:
-            if compare_totp(google_otp):
+            if compare_totp(authenticator_otp):
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
         except Exception as e:
