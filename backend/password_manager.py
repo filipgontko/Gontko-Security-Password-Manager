@@ -3,7 +3,7 @@ import re
 from backend import crypto
 from backend.credentials import Credentials
 from backend.crypto import recreate_master_password_hash, create_master_key, encrypt_message, decrypt_message, \
-    generate_chacha20_key, chacha20_encrypt, chacha20_decrypt
+    generate_chacha20_key, chacha20_encrypt, chacha20_decrypt, compare_totp
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
@@ -106,15 +106,15 @@ class PasswordManager:
             self.username = username
             logger.info("Initiating password reset...")
             if self.check_user_exists():
-                stored_master_key_hash = self.master_db.get_master_key_hash(self.username)
-                master_key_hash = recreate_master_password_hash(password)
-                if stored_master_key_hash == master_key_hash:
+                master_key_hash = create_master_key(password)
+                if compare_totp(otp):
                     self.master_password = password
+                    self.master_db.edit_master_information(self.username, master_key_hash)
                     self.user_logged_in = True
-                    logger.info("User with username '{}' successfully logged in.".format(username))
+                    logger.info("Password reset for user '{}' successful.".format(self.username))
                     return True
-                logger.error("User with username '{}' failed to log in.".format(username))
-            logger.error("Username or password is incorrect.")
+                logger.error("Password reset for user '{}' failed.".format(username))
+            logger.error("Username or OTP is incorrect.")
             return False
         except Exception as e:
             return False
