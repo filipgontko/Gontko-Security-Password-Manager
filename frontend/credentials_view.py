@@ -45,6 +45,10 @@ class CredentialsView(Screen):
         when leaving the view.
         """
         try:
+            self.ids.cred_name.text = ""
+            self.ids.website.text = ""
+            self.ids.username.text = ""
+            self.ids.passwd.text = ""
             self.ids.generate_pwd.text = ""
             self.ids.strength_slider.value = 12
             self.ids.strength_meter.value = 0

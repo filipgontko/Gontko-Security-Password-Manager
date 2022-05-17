@@ -97,7 +97,7 @@ class PasswordManager:
         Reset master password to the password manager.
         Args:
             username: Username of the user.
-            password: Master password.
+            password: New master password.
             otp: OTP code from authenticator app
         Returns:
             True if successful, False otherwise.

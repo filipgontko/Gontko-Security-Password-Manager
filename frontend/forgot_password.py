@@ -29,6 +29,7 @@ class ForgotPassword(Screen):
             self.ids.username.text = ""
             self.ids.new_master_password.text = ""
             self.ids.otp.text = ""
+            self.ids.incorrect.text = "Reset master password."
         except Exception as e:
             logger.error("Exception occurred during on_leave(). {}".format(e))
 
@@ -42,7 +43,7 @@ class ForgotPassword(Screen):
                 self.dialog = MDDialog(
                     title="Reset master password?",
                     text="Are you sure you want to reset master password? "
-                         "You won't be able to decrypt already saved passwords.",
+                         "All saved passwords will be lost.",
                     buttons=[
                         MDRoundFlatButton(text="CANCEL", on_release=self.close_dialog),
                         MDFillRoundFlatButton(text="RESET", on_release=self.reset)
@@ -78,5 +79,7 @@ class ForgotPassword(Screen):
                 self.ids.username.text = ""
                 self.ids.otp.text = ""
                 self.ids.new_master_password.text = ""
+            else:
+                self.ids.incorrect.text = "Username or code is incorrect."
         except Exception as e:
             logger.error("Exception occurred during reset(). {}".format(e))
