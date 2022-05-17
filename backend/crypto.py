@@ -350,5 +350,8 @@ def compare_totp(authenticator_otp):
     Returns:
         True if matches, False otherwise.
     """
-    totp = pyotp.TOTP(get_keyring_password("otp.key"))
-    return totp.now() == authenticator_otp
+    try:
+        totp = pyotp.TOTP(get_keyring_password("otp.key"))
+        return totp.now() == authenticator_otp
+    except Exception as e:
+        logger.error("Exception occurred during comparing OTP. - {}".format(e))
