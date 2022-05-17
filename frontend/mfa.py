@@ -26,6 +26,7 @@ class MFA(Screen):
         """
         try:
             if compare_totp(authenticator_otp):
+                self.password_manager.mfa = True
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
         except Exception as e:

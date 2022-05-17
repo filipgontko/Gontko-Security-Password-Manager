@@ -35,6 +35,7 @@ class PasswordManager:
         self.credential_site = None
         self.credential_username = None
         self.credential_id = None
+        self.mfa = False
         generate_chacha20_key()
 
     def sign_up(self, username, password):

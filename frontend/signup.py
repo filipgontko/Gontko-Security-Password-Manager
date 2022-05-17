@@ -27,11 +27,7 @@ class Signup(Screen):
         try:
             password = chacha20_encrypt(password)
             if self.password_manager.sign_up(username, password):
-                # self.setup_mfa()
-                self.parent.current = "logged_in"
-                self.parent.transition.direction = "left"
-                self.ids.username.text = ""
-                self.ids.password.text = ""
+                self.setup_mfa()
         except Exception as e:
             logger.error("Exception occurred during signup. {}".format(e))
 

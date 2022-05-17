@@ -52,6 +52,7 @@ class GontkoSecurityPasswordManagerApp(MDApp):
             sm = ScreenManager()
             if self.password_manager.master_db.is_empty():
                 sm.add_widget(Signup(self.password_manager))
+            if not self.password_manager.mfa:
                 sm.add_widget(MFA(self.password_manager))
             sm.add_widget(Login(self.password_manager))
             sm.add_widget(ForgotPassword(self.password_manager))

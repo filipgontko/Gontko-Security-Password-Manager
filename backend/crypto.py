@@ -37,11 +37,11 @@ def generate_otp_key_base():
     Returns:
         Random key in base32
     """
-    if not (key_exists("otp.key")):
-        try:
-            keyring.set_password(NAMESPACE, "otp.key", pyotp.random_base32())
-        except Exception as e:
-            logger.error("Exception occurred during otp key base generation")
+    try:
+        base32 = pyotp.random_base32()
+        keyring.set_password(NAMESPACE, "otp.key", base32)
+    except Exception as e:
+        logger.error("Exception occurred during otp key base generation")
 
 
 def key_exists(keyname):
