@@ -5,6 +5,7 @@ from kivy.uix.screenmanager import ScreenManager
 from kivy.config import Config
 from kivymd.app import MDApp
 from kivymd.uix.list import TwoLineListItem
+from dotenv import dotenv_values
 from backend.my_logger import logger
 from frontend.credentials_view import CredentialsView
 from frontend.forgot_password import ForgotPassword
@@ -35,6 +36,7 @@ class GontkoSecurityPasswordManagerApp(MDApp):
             password_manager: Password manager object.
         """
         super().__init__()
+        self.icon = "images/logo.png"
         self.password_manager = password_manager
 
     def build(self):
@@ -45,14 +47,14 @@ class GontkoSecurityPasswordManagerApp(MDApp):
         """
         try:
             Window.size = (800, 630)
-            self.icon = "images/logo.png"
             self.theme_cls.theme_style = "Dark"
             self.theme_cls.primary_palette = "Amber"
             self.theme_cls.accent_palette = "Orange"
             sm = ScreenManager()
             if self.password_manager.master_db.is_empty():
                 sm.add_widget(Signup(self.password_manager))
-            if not self.password_manager.mfa:
+            env = dotenv_values('password_manager.env')
+            if env.get('MFA') != "true":
                 sm.add_widget(MFA(self.password_manager))
             sm.add_widget(Login(self.password_manager))
             sm.add_widget(ForgotPassword(self.password_manager))
