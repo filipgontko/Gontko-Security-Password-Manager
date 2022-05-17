@@ -1,3 +1,5 @@
+import os
+
 from kivy.uix.screenmanager import Screen
 
 from backend.crypto import compare_totp
@@ -26,8 +28,10 @@ class MFA(Screen):
         """
         try:
             if compare_totp(authenticator_otp):
-                self.password_manager.mfa = True
+                with open("password_manager.env", "w") as env:
+                    env.write("MFA=true")
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
+                self.ids.otp.text = ""
         except Exception as e:
             logger.error("Exception occurred during comparison of OTP. {}".format(e))

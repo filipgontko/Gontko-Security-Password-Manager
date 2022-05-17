@@ -292,17 +292,17 @@ def check_if_pwned(password):
     return pwnedpasswords.check(chacha20_decrypt(password), plain_text=True)
 
 
-def generate_otp_url(email):
+def generate_otp_url(username):
     """
     Generate OTP URL that can be used with Authenticator app (e.g. Google Authenticator, Microsoft Authenticator...).
     Args:
-        email: E-mail of the user
+        username: Username of the user
 
     Returns:
         URL that can be converted to QR and used in Authenticator app.
     """
     generate_otp_key_base()
-    return pyotp.totp.TOTP(get_keyring_password("otp.key")).provisioning_uri(name=email, issuer_name='Gontko Security Password Manager')
+    return pyotp.totp.TOTP(get_keyring_password("otp.key")).provisioning_uri(name=username, issuer_name='Gontko Security Password Manager')
 
 
 def generate_otp_qr_for_auth(otp_url):
