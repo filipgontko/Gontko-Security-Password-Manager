@@ -40,6 +40,9 @@ class PasswordManager:
     def sign_up(self, username, password):
         """
         Sign up to the password manager.
+        Args:
+            username: Username of the user.
+            password: Master password.
         Returns:
             True if successful, False otherwise.
         """
@@ -66,12 +69,42 @@ class PasswordManager:
     def login(self, username, password):
         """
         Login to the password manager.
+        Args:
+            username: Username of the user.
+            password: Master password.
         Returns:
             True if successful, False otherwise.
         """
         try:
             self.username = username
             logger.info("Initiating login...")
+            if self.check_user_exists():
+                stored_master_key_hash = self.master_db.get_master_key_hash(self.username)
+                master_key_hash = recreate_master_password_hash(password)
+                if stored_master_key_hash == master_key_hash:
+                    self.master_password = password
+                    self.user_logged_in = True
+                    logger.info("User with username '{}' successfully logged in.".format(username))
+                    return True
+                logger.error("User with username '{}' failed to log in.".format(username))
+            logger.error("Username or password is incorrect.")
+            return False
+        except Exception as e:
+            return False
+
+    def reset_password(self, username, password, otp):
+        """
+        Reset master password to the password manager.
+        Args:
+            username: Username of the user.
+            password: Master password.
+            otp: OTP code from authenticator app
+        Returns:
+            True if successful, False otherwise.
+        """
+        try:
+            self.username = username
+            logger.info("Initiating password reset...")
             if self.check_user_exists():
                 stored_master_key_hash = self.master_db.get_master_key_hash(self.username)
                 master_key_hash = recreate_master_password_hash(password)

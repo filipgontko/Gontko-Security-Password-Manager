@@ -30,7 +30,7 @@ class Login(Screen):
             if self.password_manager.login(username, password):
                 self.parent.current = "logged_in"
                 self.parent.transition.direction = "left"
-                self.ids.email.text = ""
+                self.ids.username.text = ""
                 self.ids.login_password.text = ""
         except Exception as e:
             logger.error("Exception occurred during login(). {}".format(e))
@@ -41,4 +41,10 @@ class Login(Screen):
         Returns:
 
         """
-        pass
+        try:
+            self.parent.current = "forgot_password"
+            self.parent.transition.direction = "left"
+            self.ids.username.text = ""
+            self.ids.login_password.text = ""
+        except Exception as e:
+            logger.error("Exception occurred during forgot_password(). {}".format(e))
