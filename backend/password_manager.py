@@ -3,7 +3,7 @@ import re
 from backend import crypto
 from backend.credentials import Credentials
 from backend.crypto import recreate_master_password_hash, create_master_key, encrypt_message, decrypt_message, \
-    generate_chacha20_key, chacha20_encrypt, chacha20_decrypt
+    generate_chacha20_key, chacha20_encrypt, chacha20_decrypt, compare_totp
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
@@ -35,11 +35,15 @@ class PasswordManager:
         self.credential_site = None
         self.credential_username = None
         self.credential_id = None
+        self.mfa = False
         generate_chacha20_key()
 
     def sign_up(self, username, password):
         """
         Sign up to the password manager.
+        Args:
+            username: Username of the user.
+            password: Master password.
         Returns:
             True if successful, False otherwise.
         """
@@ -66,6 +70,9 @@ class PasswordManager:
     def login(self, username, password):
         """
         Login to the password manager.
+        Args:
+            username: Username of the user.
+            password: Master password.
         Returns:
             True if successful, False otherwise.
         """
@@ -82,6 +89,33 @@ class PasswordManager:
                     return True
                 logger.error("User with username '{}' failed to log in.".format(username))
             logger.error("Username or password is incorrect.")
+            return False
+        except Exception as e:
+            return False
+
+    def reset_password(self, username, password, otp):
+        """
+        Reset master password to the password manager.
+        Args:
+            username: Username of the user.
+            password: New master password.
+            otp: OTP code from authenticator app
+        Returns:
+            True if successful, False otherwise.
+        """
+        try:
+            self.username = username
+            logger.info("Initiating password reset...")
+            if self.check_user_exists():
+                master_key_hash = create_master_key(password)
+                if compare_totp(otp):
+                    self.master_password = password
+                    self.master_db.edit_master_information(self.username, master_key_hash)
+                    self.user_logged_in = True
+                    logger.info("Password reset for user '{}' successful.".format(self.username))
+                    return True
+                logger.error("Password reset for user '{}' failed.".format(username))
+            logger.error("Username or OTP is incorrect.")
             return False
         except Exception as e:
             return False

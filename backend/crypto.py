@@ -37,11 +37,11 @@ def generate_otp_key_base():
     Returns:
         Random key in base32
     """
-    if not (key_exists("otp.key")):
-        try:
-            keyring.set_password(NAMESPACE, "otp.key", pyotp.random_base32())
-        except Exception as e:
-            logger.error("Exception occurred during otp key base generation")
+    try:
+        base32 = pyotp.random_base32()
+        keyring.set_password(NAMESPACE, "otp.key", base32)
+    except Exception as e:
+        logger.error("Exception occurred during otp key base generation")
 
 
 def key_exists(keyname):
@@ -294,12 +294,12 @@ def check_if_pwned(password):
 
 def generate_otp_url(email):
     """
-    Generate OTP URL that can be used with Google Authenticator.
+    Generate OTP URL that can be used with Authenticator app (e.g. Google Authenticator, Microsoft Authenticator...).
     Args:
         email: E-mail of the user
 
     Returns:
-        URL that can be converted to QR and used in Google Authenticator app.
+        URL that can be converted to QR and used in Authenticator app.
     """
     generate_otp_key_base()
     return pyotp.totp.TOTP(get_keyring_password("otp.key")).provisioning_uri(name=email, issuer_name='Gontko Security Password Manager')
@@ -307,7 +307,7 @@ def generate_otp_url(email):
 
 def generate_otp_qr_for_auth(otp_url):
     """
-    Generate a QR code for Google Authenticator app.
+    Generate a QR code for Authenticator app (e.g. Google Authenticator, Microsoft Authenticator...).
     Image is saved in png format in images directory.
     Args:
         otp_url: Url of the OTP
@@ -341,14 +341,17 @@ def make_images_dir():
             raise e
 
 
-def compare_totp(google_otp):
+def compare_totp(authenticator_otp):
     """
     Compares the user entered OTP from Google Authenticator against the locally calculated OTP.
     Args:
-        google_otp: Google Authenticator code
+        authenticator_otp: Authenticator app code
 
     Returns:
         True if matches, False otherwise.
     """
-    totp = pyotp.TOTP(get_keyring_password("otp.key"))
-    return totp.now() == google_otp
+    try:
+        totp = pyotp.TOTP(get_keyring_password("otp.key"))
+        return totp.now() == authenticator_otp
+    except Exception as e:
+        logger.error("Exception occurred during comparing OTP. - {}".format(e))
