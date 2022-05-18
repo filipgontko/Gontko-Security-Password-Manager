@@ -54,6 +54,8 @@ class GontkoSecurityPasswordManagerApp(MDApp):
             sm = ScreenManager()
             if self.password_manager.master_db.is_empty():
                 sm.add_widget(Signup(self.password_manager))
+                sm.add_widget(Login(self.password_manager))
+                sm.add_widget(LoginPwdless(self.password_manager))
             env = dotenv_values('password_manager.env')
             if env.get('MFA') != "true":
                 sm.add_widget(MFA(self.password_manager))
