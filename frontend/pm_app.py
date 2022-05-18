@@ -11,6 +11,7 @@ from frontend.credentials_view import CredentialsView
 from frontend.forgot_password import ForgotPassword
 from frontend.logged_in import LoggedIn
 from frontend.login import Login
+from frontend.login_passwordless import LoginPwdless
 from frontend.mfa import MFA
 from frontend.signup import Signup
 
@@ -56,7 +57,10 @@ class GontkoSecurityPasswordManagerApp(MDApp):
             env = dotenv_values('password_manager.env')
             if env.get('MFA') != "true":
                 sm.add_widget(MFA(self.password_manager))
-            sm.add_widget(Login(self.password_manager))
+            if env.get('PASSWORDLESS') != "true":
+                sm.add_widget(Login(self.password_manager))
+            else:
+                sm.add_widget(LoginPwdless(self.password_manager))
             sm.add_widget(ForgotPassword(self.password_manager))
             sm.add_widget(LoggedIn(self.password_manager))
             sm.add_widget(CredentialsView(self.password_manager))
