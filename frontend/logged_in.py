@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.snackbar import Snackbar
+from dotenv import dotenv_values
 
 from backend.crypto import check_if_pwned, chacha20_encrypt
 from backend.my_logger import logger
@@ -54,6 +55,12 @@ class LoggedIn(Screen):
         """
         try:
             self.password_manager.logout()
+            env = dotenv_values('password_manager.env')
+            if env.get('PASSWORDLESS') != "true":
+                self.parent.current = "login"
+            else:
+                self.parent.current = "login-pwdless"
+            self.parent.transition.direction = "right"
         except Exception as e:
             logger.error("Exception occurred during logout(). {}".format(e))
 

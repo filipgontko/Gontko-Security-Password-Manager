@@ -3,7 +3,7 @@ import re
 from backend import crypto
 from backend.credentials import Credentials
 from backend.crypto import recreate_master_password_hash, create_master_key, encrypt_message, decrypt_message, \
-    generate_chacha20_key, chacha20_encrypt, chacha20_decrypt, compare_totp
+    generate_chacha20_key, chacha20_encrypt, chacha20_decrypt, compare_totp, get_keyring_password
 from backend.databases.master_key_database import MasterKeyDB
 from backend.databases.credentials_database import CredentialsDB
 from backend.my_logger import logger
@@ -89,6 +89,30 @@ class PasswordManager:
                     return True
                 logger.error("User with username '{}' failed to log in.".format(username))
             logger.error("Username or password is incorrect.")
+            return False
+        except Exception as e:
+            return False
+
+    def password_less_login(self, username, code):
+        """
+        Login to the password manager with authenticator code.
+        Args:
+            username: Username of the user.
+            code: Authenticator code.
+        Returns:
+            True if successful, False otherwise.
+        """
+        try:
+            self.username = username
+            logger.info("Initiating login...")
+            if self.check_user_exists():
+                if compare_totp(code):
+                    self.master_password = chacha20_encrypt(get_keyring_password("password-less"))
+                    self.user_logged_in = True
+                    logger.info("User with username '{}' successfully logged in.".format(username))
+                    return True
+                logger.error("User with username '{}' failed to log in.".format(username))
+            logger.error("Username or code is incorrect.")
             return False
         except Exception as e:
             return False
