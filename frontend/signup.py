@@ -1,7 +1,18 @@
 from kivy.uix.screenmanager import Screen
 
-from backend.crypto import generate_otp_url, generate_otp_qr_for_auth, chacha20_encrypt
+from backend.crypto import generate_otp_url, generate_otp_qr_for_auth, chacha20_encrypt, generate_crypto_key_base, \
+    get_keyring_password
 from backend.my_logger import logger
+
+
+def password_less_setup():
+    """
+    Setup environment variable for PASSWORDLESS=true and generate a crypto key which will be used instead of a
+    master password. This key will be stored encrypted in keychain.
+    """
+    with open("password_manager.env", "a") as env:
+        env.write("PASSWORDLESS=true\n")
+    generate_crypto_key_base("password-less")
 
 
 class Signup(Screen):
@@ -18,20 +29,37 @@ class Signup(Screen):
         self.password_manager = password_manager
         self.original_color = None
 
-    def signup(self, username, password):
+    def signup(self, username, password, switch):
         """
         Sign up the user to the password manager.
         Args:
             username: Username of the user.
             password: Master password.
+            switch: Password-less switch value
         """
         try:
-            if username != "" and password != "":
-                password = chacha20_encrypt(password)
-                if self.password_manager.sign_up(username, password):
-                    self.setup_mfa()
+            if username != "":
+                # Password-less
+                if switch:
+                    password_less_setup()
+                    password = chacha20_encrypt(get_keyring_password("password-less"))
+                    self.signup_with_mfa(username, password)
+                # With password
+                if password != "":
+                    password = chacha20_encrypt(password)
+                    self.signup_with_mfa(username, password)
         except Exception as e:
             logger.error("Exception occurred during signup. {}".format(e))
+
+    def signup_with_mfa(self, username, password):
+        """
+        Add entries to Master key DB and continue to MFA setup screen.
+        Returns:
+            None
+        """
+        if self.password_manager.sign_up(username, password):
+            self.setup_mfa()
+            return None
 
     def setup_mfa(self):
         """
