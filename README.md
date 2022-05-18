@@ -1,3 +1,5 @@
+<img src=https://github.com/filipgontko/Gontko-Security-Password-Manager/blob/main/images/full-logo.png  width="520">
+
 # Gontko Security Password Manager
 Password manager as a personal project to get better in coding and understanding cryptography.
 
